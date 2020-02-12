@@ -21,7 +21,7 @@ M = ADData.M;
 GM0 = -delta.*kx;
 PM0 = -delta.*omega;
 
-hInc = exp(1i*(-GM0.*X + omega*kn*Y.*Beta));
+hInc = exp(1i*(-GM0.*X+omega*kn*Y.*Beta));
 
 if strcmp(type,'acoustic')
     pangle = AAData.sigma5;
@@ -81,7 +81,15 @@ hold off
 
 xlabel('$x/2$','interpreter','LaTeX')
 ylabel('$y/2$','interpreter','LaTeX')
+%xlim([-1,2])
+%real(rot)
+%imag(rot)
+
+%axis([-4*real(rot),5*real(rot),-4*imag(rot),4*imag(rot)])
+%xlim([-2,2])
 
 colorbar
+%-ADData.M.*ADData.c0
+%caxis(2e-1*[-1,1])
 
 end

@@ -1,4 +1,4 @@
-function plotField(h,ADData,AAData,plotData,type)
+function plotFieldTime(h,omeg,ADData,AAData,plotData,type)
 
 nP=12;
 
@@ -21,7 +21,7 @@ M = ADData.M;
 GM0 = -delta.*kx;
 PM0 = -delta.*omega;
 
-hInc = exp(1i*(-GM0.*X + omega*kn*Y.*Beta));
+hInc = exp(1i*(-GM0.*X+omega*kn*Y.*Beta));
 
 if strcmp(type,'acoustic')
     pangle = AAData.sigma5;
@@ -44,16 +44,14 @@ end
 h2 = funPerMult(h.',exp(1i*pangle),nP);
 hIncFinPer = funPerMult(hIncFin.',exp(1i*pangle),nP);
 
-
 rot=exp(1i*atan(dPhys/sPhys));
 newcoord = (Xper+1i*Yper)*rot;
 
-h=pcolor(real(newcoord),imag(newcoord),real(h2 + hIncFinPer));
+h=pcolor(real(newcoord),imag(newcoord),real(exp(-1i*omeg)*(h2 + hIncFinPer)));
 set(h, 'EdgeColor', 'none');
 
 hold on 
 
-%pcolor(real(newcoord),imag(newcoord),0*real(hIncFinPer));
 shading interp; colormap jet;
 
 if isfield(plotData,'colLimits'); caxis(plotData.colLimits); end
@@ -74,14 +72,10 @@ ylims = ax.YLim;
 drawArrow = @(x,y,varargin) quiver( x(1),y(1),x(2)-x(1),y(2)-y(1),0,'MaxHeadSize',1, varargin{:} );       
 b = omega*kn*Beta; a = (-GM0+M^2*PM0);
 l = rot.*(a+1i*b);
-drawArrow(.99*xlims(1)+[0,sqrt(1)*cos(angle(l))],.9*ylims(1) + [0,sqrt(1)*sin(angle(l))],'linewidth',3,'color','k')
+drawArrow(-1.3+.99*xlims(1)+[0,sqrt(1)*cos(angle(l))],.9*ylims(1) + [0,sqrt(1)*sin(angle(l))],'linewidth',3,'color','k')
 
 shading interp
 hold off
 
-xlabel('$x/2$','interpreter','LaTeX')
-ylabel('$y/2$','interpreter','LaTeX')
-
-colorbar
 
 end
