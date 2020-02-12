@@ -1,0 +1,175 @@
+vaneDist = .6;
+stagAng = 40;
+
+nFreq = 10;
+freq = linspace(.1,100,nFreq);
+nFreq = 1;
+
+C1 = 10;[0.01,.5,3];
+addpath('matlab2tikz/src','cfe')
+imageFolder = '../../images/';
+
+for l1 = 1;[1,2,3]
+%l
+%%
+ADData=struct('spac',[vaneDist*cos(stagAng*pi/180),vaneDist*sin(stagAng*pi/180)],...%Blade Spacing [h,d]
+              'physC',   1,...                          %Blade length
+              'c0',      340,...                        %Speed of sound
+              'M',       .3,...                         %Mach number 
+              'case',    'II', ...                       %Case
+              'C',       C1(l1));                            %Coefficient of case                       
+             
+%% Aeroacoustic Data
+AAData=struct( 'omega',    12*(1+0e-9i),...                      %Tangential Frequency
+               'kn',       [],...                       %Normal frequency
+               'k',        2*(1+0e-9i),...
+               'kz',       0,...                       %Spanwise frequency
+               'sigmao',   -pi/4,...                  %Interblade phase angle in (x,y)-space
+               'Amp',      [nan,1,nan]); %Amplitude of gust in form [At,An,A3]
+%% Information about Modes            
+Modes=struct('comb',[1,1,1,1],...
+             'trunc',200,...                     %Truncation of kernel modes
+             'dmodes',15,...                      %Number of duct mode
+             'amodes',15);
+
+[newADData,newAAData] = prepareData(ADData,AAData);         
+out = computeModes(newADData,newAAData,Modes);        
+%%
+xSurf = (1+sin(pi/2*linspace(-1,1)))/2;
+
+data=computeCoefficients(newADData,newAAData,out);
+x = [linspace(-6,0),xSurf,linspace(1,7)];
+%x = linspace(-6,8+0*newADData.spac(2),200);
+y = newADData.spac(1)*(1+sin(linspace(-1,1,100)*pi/2))/2;
+[X,Y] = meshgrid(x,y);
+
+plotData = struct('X',X,...
+                  'Y',Y,...
+                  'axisLimits',[-3,3,-2,2]);              
+            
+newData=computeExponents(data,plotData);
+
+type = 'pressure';
+
+h=computeField(newData,type);
+%%
+figure(5)
+%clf
+plotField(h,newADData,newAAData,plotData,type)
+caxis([-.50,.50])
+%latexPNG(['trans-',num2str(l1)],imageFolder,gca);
+%return
+%close
+%%
+LPa = permute(out.LPa,[3,2,1]);
+LMa = permute(out.LMa,[3,2,1]);
+ZPa = permute(out.ZPa,[3,2,1]);
+ZMa = permute(out.ZMa,[3,2,1]); 
+SQRTa = permute(out.SQRTa,[3,2,1]);
+
+data.comb = [1 0 1 0];
+DLP = D(LPa,data);
+data.comb = [0 1 0 1];
+DLM = D(LMa,data);
+
+Beta = newADData.Beta;
+%s = sqrt(newADData.spac(1).^2+newADData.spac(2)^2);
+se = newADData.spac(3);
+
+R = pi*abs(ZPa.*DLP./SQRTa./se);
+T = pi*abs(ZMa.*DLM./SQRTa./se.*exp(-1i*LMa));
+
+modeNum = 5;
+
+locs = find(abs(imag(LMa(floor(end/2)-modeNum+1:floor(end/2)+modeNum+1)))>1e-3);
+
+num = numel(LMa);
+x = -modeNum:modeNum;
+
+figure(2)
+%clf
+b=bar(x,abs([R(floor(end/2)-modeNum+1:floor(end/2)+modeNum+1), ...
+         T(floor(end/2)-modeNum+1:floor(end/2)+modeNum+1)]) ,...
+         'FaceColor','flat');
+
+cols = lines;   
+     
+b(1).CData(locs,:) = b(1).CData(locs,:)+.4;   
+b(2).CData(locs,:) = b(2).CData(locs,:)+.4;     
+xlabel('Mode number, m ')
+ylabel('$\left| R_m \right|, \left| T_m \right|$')
+
+%cleanfigure
+ylim([0,1])
+%%matlab2tikz([imageFolder,'tr-',num2str(l1),'.tex'], 'height', '\fheight', 'width', '\fwidth','parseStrings',false,'extratikzpictureoptions','trim axis left, trim axis right');
+%latexPNGNAR(['tr-',num2str(l1)],imageFolder,gca);
+close
+end
+return
+%%
+nC = 100;
+C = linspace(0.,1,nC+1); C(1)=[];
+%C = 10.^linspace(-2,0,nC);
+Ts = zeros(2,nC);
+Rs = zeros(2,nC);
+
+for l = 1:nC
+l
+ADData.C = C(l);    
+[newADData,newAAData] = prepareData(ADData,AAData);         
+out = computeModes(newADData,newAAData,Modes);        
+data=computeCoefficients(newADData,newAAData,out);
+
+LPa = permute(out.LPa,[3,2,1]);
+LMa = permute(out.LMa,[3,2,1]);
+ZPa = permute(out.ZPa,[3,2,1]);
+ZMa = permute(out.ZMa,[3,2,1]); 
+SQRTa = permute(out.SQRTa,[3,2,1]);
+
+data.comb = [1 0 1 0];
+DLP = D(LPa,data);
+data.comb = [0 1 0 1];
+DLM = D(LMa,data);
+
+Beta = newADData.Beta;
+%s = sqrt(newADData.spac(1).^2+newADData.spac(2)^2);
+se = newADData.spac(3);
+
+R = pi*abs(ZPa.*DLP./SQRTa./se);
+T = pi*abs(ZMa.*DLM./SQRTa./se.*exp(-1i*LMa));
+ 
+Rs(:,l) = R(ceil(end/2)-1:ceil(end/2));
+Ts(:,l) = T(ceil(end/2)-1:ceil(end/2));
+end
+
+%%
+blues = cols(1,:);
+reds = cols(2,:);
+figure(3)
+plot(abs(C),abs((Rs(2,:)-0*Rs(2,end-1))./Rs(2,1)),'-','Color',blues,'LineWidth',3)
+hold on
+%loglog(abs(C),abs((Rs(1,:)-0*Rs(1,end-1))./1+0*Rs(1,1)),'--', 'Color',blues,'LineWidth',3)
+plot(abs(C),abs((Ts(2,:)-0*Ts(2,end-1))./Ts(2,1)),'-','Color',reds,'LineWidth',3)
+%loglog(abs(C),abs((Ts(1,:)-0*Ts(1,end-1))./1+0*Ts(1,1)),'--','Color',reds,'LineWidth',3)
+xlabel('$C_{II}$')
+ylabel('$\left| R_0 \right|, \left| T_0 \right|$')
+
+hold off
+ylim([0,1])
+matlab2tikz([imageFolder,'trc.tex'], 'height', '\fheight', 'width', '\fwidth','parseStrings',false,'extratikzpictureoptions','trim axis left, trim axis right');
+
+
+figure(4)
+semilogy(abs(C),abs((Rs(2,:))./Rs(2,1)),'-','Color',blues,'LineWidth',3)
+hold on
+%loglog(abs(C),abs((Rs(1,:)-0*Rs(1,end-1))./1+0*Rs(1,1)),'--', 'Color',blues,'LineWidth',3)
+semilogy(abs(C),abs((Ts(2,:))./Ts(2,1)),'-','Color',reds,'LineWidth',3)
+%loglog(abs(C),abs((Ts(1,:)-0*Ts(1,end-1))./1+0*Ts(1,1)),'--','Color',reds,'LineWidth',3)
+hold off
+
+xlabel('$C_{II}$')
+ylabel('$\left| R_0 \right|, \left| T_0 \right|$')
+%matlab2tikz([imageFolder,'trc-log.tex'], 'height', '\fheight', 'width', '\fwidth','parseStrings',false,'extratikzpictureoptions','trim axis left, trim axis right');
+
+%xlim([.01,.1])
+%axis([-inf,1,1e-2,1])
