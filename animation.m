@@ -7,8 +7,8 @@ imageFolder = '../../images/';
 d = vaneDist*sin(stagAng*pi/180);
 s = vaneDist*cos(stagAng*pi/180);
 
-omega = 130*(1 + 1e-5i);
-ky = .3;
+omega = 100*(1 + 1e-5i);
+ky = .1;
 zy = -omega*ky;
 M = 0.3;
 m = 0;
@@ -23,7 +23,7 @@ if imag(kx)>1e-2, warning('The mode is not cut-on.'); return; end
 sigma = kx*delta*d + ky*omega*(s*Beta);
 sigmaTest = -(s*Beta)*zy + d*mysqrt(omega*w,(Beta*s*zy+2*m*pi)/(Beta*s));
 sigmao = sigma - d*omega*M^2*delta;
-C1 = .1;
+C1 = .01;
 %l
 %%
 ADData=struct('spac',   [s,d],...%Blade Spacing [h,d]
@@ -53,8 +53,8 @@ out = computeModes2(newADData,newAAData,Modes);
 xSurf = (1+sin(pi/2*linspace(-1,1)))/2;
 
 data=computeCoefficients(newADData,newAAData,out);
-x = [linspace(-6,0,400),xSurf,linspace(1,7,400)];
-y = newADData.spac(1)*(1+sin(linspace(-1,1,400)*pi/2))/2;
+x = [linspace(-6,0,300),xSurf,linspace(1,7,300)];
+y = newADData.spac(1)*(1+sin(linspace(-1,1,300)*pi/2))/2;
 [X,Y] = meshgrid(x,y);
 
 plotData = struct('X',X,...
@@ -67,14 +67,17 @@ type = 'pressure';
 
 h=computeField(newData,type);
 %%
-omeg = linspace(0,2*pi,80+1);omeg(1) = [];
-
+omeg = linspace(0,2*pi,60+1);omeg(1) = [];
+types = ["pressure","hvelocity"];
+for j = 1:2
+    h=computeField(newData,types(j));
 for l = 1:numel(omeg)
-figure(6)
-
-plotFieldTime(h,omeg(l),newADData,newAAData,plotData,type)
-caxis([-100,100])
+figure(j)
+plotFieldTime(h,omeg(l),newADData,newAAData,plotData,types(j))
+if j ==1; caxis([-100,100]); elseif j ==2 ; caxis([-30,30]); end
 set(gca,'Position',[0 0 1 1]);
-print(['animations/totalAnim',num2str(l,'%05.3d')],'-dpng','-r50');
+print(strcat('animations/totalAnim',types(j),num2str(l,'%05.3d')),'-dpng','-r50');
+l
+end
 end
 return

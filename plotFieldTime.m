@@ -63,7 +63,7 @@ for l = -nP:nP
    plot(real(rot*loc),imag(rot*loc),'k','LineWidth',5) 
 end
 
-xlims = [-2*real(rot),3*real(rot)];
+xlims = [-2.5*real(rot),3.5*real(rot)];
 axis equal
 xlim(xlims);
 
