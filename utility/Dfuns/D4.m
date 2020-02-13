@@ -7,7 +7,7 @@ KMTM=data.KMTM;
 
 gminTM=data.gminTM;
 
-D4terms=bsxfun(@rdivide,C.*KMTM,gminTM).*exp(1i*gminTM);
+D4terms=bsxfun(@rdivide,C.*KMTM,gminTM).*exp(2i*gminTM);
 D4=-sum(D4terms,3)./(1i*KMG.*gminPM0);
 
 end

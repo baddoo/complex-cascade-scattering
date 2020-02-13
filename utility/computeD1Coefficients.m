@@ -3,8 +3,6 @@ function D1Data= computeD1Coefficients(coefdata)
 extractStructureData;
 coefdata.AAData;
 w0  = An;
-% KpprTM =    coefdata.KpprTM;
-
 T  = w0/(4i*pi^2*KMGM0);
 
 S = 0;

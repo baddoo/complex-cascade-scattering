@@ -3,14 +3,15 @@ function plotFieldScattered(h,ADData,AAData,plotData,type)
 nP=12;
 
 Beta = ADData.Beta; % PG factor
+semiChordDim = ADData.chordDim/2;
+% Put back into dimensional variables
+X = plotData.X*semiChordDim;
+Y = plotData.Y*semiChordDim./Beta; % Undo PG transformation.
+sDim = ADData.spacDim(1);
+dDim = ADData.spacDim(2);
 
-X = plotData.X;
-Y = plotData.Y./Beta; % Undo PG transformation.
-dPhys = ADData.spac(2);
-sPhys = ADData.spac(1)/Beta;
-
-Yper = funPer(Y.',sPhys,nP);
-Xper = funPer(X.',dPhys,nP);
+Yper = funPer(Y.',sDim,nP);
+Xper = funPer(X.',dDim,nP);
 
 kx = AAData.kx;
 ky = AAData.ky;
@@ -19,8 +20,6 @@ M = ADData.M;
 
 GM0 = -kx/Beta^2;
 PM0 = -omega/Beta^2;
-
-hInc = exp(1i*(-GM0.*X+omega*ky*Y.*Beta));
 
 if strcmp(type,'acoustic')
     pangle = AAData.sigma;
@@ -38,7 +37,7 @@ end
 
 h2 = funPerMult(h.',exp(1i*pangle),nP);
 
-rot=exp(1i*atan(dPhys/sPhys));
+rot=exp(0i*atan(dDim/sDim));
 newcoord = (Xper+1i*Yper)*rot;
 
 h=pcolor(real(newcoord),imag(newcoord),real(h2));
@@ -46,16 +45,14 @@ set(h, 'EdgeColor', 'none');
 
 hold on 
 
-%pcolor(real(newcoord),imag(newcoord),0*real(hIncFinPer));
 shading interp; colormap jet;
 
 if isfield(plotData,'colLimits'); caxis(plotData.colLimits); end
 if isfield(plotData,'axisLimits'); axis(plotData.axisLimits); end
 if isfield(plotData,'colorbar'); colorbar; end
 
-
 for l = -nP:nP
-    loc = ([0,1]+l*dPhys)+1i*l*[sPhys,sPhys];
+    loc = ([0,2*semiChordDim]+l*dDim)+1i*l*[sDim,sDim];
    plot(real(rot*loc),imag(rot*loc),'k','LineWidth',3) 
 end
 
@@ -72,8 +69,8 @@ drawArrow(.99*xlims(1)+[0,sqrt(1)*cos(angle(l))],.9*ylims(1) + [0,sqrt(1)*sin(an
 shading interp
 hold off
 
-xlabel('$x/2$','interpreter','LaTeX')
-ylabel('$y/2$','interpreter','LaTeX')
+xlabel('$x^\ast$','interpreter','LaTeX')
+ylabel('$y^\ast$','interpreter','LaTeX')
 %xlim([-1,2])
 %real(rot)
 %imag(rot)

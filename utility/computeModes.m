@@ -44,7 +44,7 @@ KMLM=permute(Kminus(permute(LMa,[3,2,1,4,5]),Kargs),[3,2,1,4,5]);
 KPLP=permute(Kplus(permute(LPa,[3,2,1,4,5]),Kargs),[3,2,1,4,5]); 
 
 GM0 = -real(kx)/Beta^2;
-PM0 = -real(omega)*Beta^2;
+PM0 = -real(omega)/Beta^2;
 
 output.GM0 = GM0;
 output.PM0 = PM0;

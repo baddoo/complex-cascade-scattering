@@ -16,12 +16,12 @@ ADData=struct('spacDim',     [sDim,dDim],... %Dimensional blade spacing
               'c0',          340,...         %Speed of sound
               'M',           0.2,...           %Mach number 
               'Wdim',        0,...           %Spanwise background velocity
-              'case',        2, ...              %Case
-              'C',           .01);                 %Coefficient of case                       
+              'case',        1, ...              %Case
+              'C',           .001);                 %Coefficient of case                       
              
 %% Aeroacoustic Data
 AAData=struct( 'omegaDim',    [],...                 %Time Frequency
-               'omega',       12.5,...                 %Time Frequency
+               'omega',       10,...                 %Time Frequency
                'kxDim',       [],...                   %Tangential frequency
                'kx',          'gust',...                   %Tangential frequency
                'kyDim',       [],...                       %Normal frequency
@@ -40,7 +40,8 @@ out = computeModes(newADData,newAAData,Modes);
 xSurf = (1+sin(pi/2*linspace(-1,1))); %xSurf(1) = []; xSurf(end) = [];
 
 data=computeCoefficients(newADData,newAAData,out);
-x = [linspace(-4,0,100),xSurf,linspace(2,6,100)];
+x = [linspace(-5,0,100),xSurf,linspace(2,7,100)];
+x = xSurf;
 y = newADData.spac(1)*(1+sin(linspace(-1,1,50)*pi/2))/2;
 [X,Y] = meshgrid(x,y);
 
@@ -57,4 +58,4 @@ h=computeField(newData,type);
 figure(1)
 
 plotFieldScattered(h,newADData,newAAData,plotData,type)
-caxis(1*[-1,1])
+caxis(.1*[-.10,10])

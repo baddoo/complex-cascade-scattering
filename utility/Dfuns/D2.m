@@ -12,9 +12,9 @@ gminGM0 = data.gminGM0;
 gminPM0 = data.gminPM0;
 gminTM = data.gminTM;
 
-D2V = V.*exp(1i*gminGM0)./(1i*gminGM0.*gminPM0.*KMG);
+D2V = V.*exp(2i*gminGM0)./(1i*gminGM0.*gminPM0.*KMG);
 
-D2termsA=bsxfun(@rdivide,A.*KMTM,gminTM).*exp(1i*gminTM);
+D2termsA=bsxfun(@rdivide,A.*KMTM,gminTM).*exp(2i*gminTM);
 D2A=-sum(D2termsA,3)./(1i*KMG.*gminPM0);
 
 D2 = D2V + D2A;

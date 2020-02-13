@@ -16,13 +16,13 @@ TPd = data.TPd;
 GM0 = data.GM0;
 PM0 = data.PM0;
 
-omega5 = data.omega5; w=data.w;
+omega = data.omega; 
+w=data.w;
 
 X = plotdata.X;
 Y = plotdata.Y;
 newdata.X = X;
 newdata.Y = Y;
-% Bit for source modes
 
 xLM3 = bsxfun(@times,X,LMa);         newdata.xLM3 = xLM3;
 xLP3 = bsxfun(@times,X,LPa);         newdata.xLP3 = xLP3;
@@ -34,13 +34,13 @@ yMinhZM3 = bsxfun(@times,Y-s,ZMa);  newdata.yMinhZM3 = yMinhZM3;
 xTM3  = bsxfun(@times,X,TMd);
 xTP3  = bsxfun(@times,X,TPd);
 
-phiGM0 = bsxfun(@times,X,GM0);
-phiPM0 = bsxfun(@times,X,PM0);
+xGM0 = bsxfun(@times,X,GM0);
+xPM0 = bsxfun(@times,X,PM0);
 
-pressureFactor = -1i*exp(1i*X.*PM0.*M^2);
-velocityFactor =     exp(1i*X.*PM0.*M^2);
+pressureFactor = -1i*exp(1i*xPM0.*M^2);
+velocityFactor =     exp(1i*xPM0.*M^2);
 
-nd3=permute(0:(size(TMd,3)-1),[1,3,2,4,5]);
+zeta = @(zVar) mysqrt(omega*w,zVar);
 
 A1aResP = -bsxfun(@times,ZPa.*exp(1i*s*ZPa)./(del*SQRTa.*sin(s*ZPa)),cos(yZP3).*exp(-1i*xLP3));
 newdata.A1aResP.acoustic = A1aResP;
@@ -66,8 +66,6 @@ newdata.A1bResM.pressure = A1bResM.*(LMa-PM0).*pressureFactor;
 newdata.A1bResM.hvelocity = A1bResM.*(-1i*LMa).*velocityFactor;
 newdata.A1bResM.vvelocity = bsxfun(@times,ZMa./(del*SQRTa.*sin(s*ZMa)).*ZMa,-sin(yMinhZM3).*exp(-1i*xLM3)).*velocityFactor;
 
-zeta = @(zVar) mysqrt(omega5*w,zVar);
-
 A1bTP = bsxfun(@times,exp(1i*(d*TPd+sigma))./(cos(d*TPd+sigma)-cos(zeta(TPd).*s)),cos(zeta(TPd).*Y).*exp(-1i*xTP3));
 newdata.A1bTP.acoustic = A1bTP;
 newdata.A1bTP.pressure = A1bTP.*(TPd-PM0).*pressureFactor;
@@ -92,36 +90,36 @@ newdata.A1aTM.pressure = A1aTM.*(TMd-PM0).*pressureFactor;
 newdata.A1aTM.hvelocity = A1aTM.*(-1i*TMd).*velocityFactor;
 newdata.A1aTM.vvelocity = -bsxfun(@times,1./(cos(d*TMd+sigma)-cos(zeta(TMd).*s)),-zeta(TMd).*sin(zeta(TMd).*(Y-s)).*exp(-1i*xTM3)).*velocityFactor;
 
-zetaGM0=mysqrt(omega5.*w,GM0);
+zetaGM0=mysqrt(omega.*w,GM0);
 psiZetaGM0=bsxfun(@times,Y,zetaGM0);
 psiMinhZetaGM0=bsxfun(@times,Y-s,zetaGM0);
 
-A1bGM0 = bsxfun(@times,exp(1i*(d*GM0+sigma))./(cos(d*GM0+sigma)-cos(s*zetaGM0)),cos(psiZetaGM0).*exp(-1i*phiGM0));
+A1bGM0 = bsxfun(@times,exp(1i*(d*GM0+sigma))./(cos(d*GM0+sigma)-cos(s*zetaGM0)),cos(psiZetaGM0).*exp(-1i*xGM0));
 newdata.A1bGM0.acoustic = A1bGM0;
 newdata.A1bGM0.pressure = A1bGM0.*(GM0-PM0).*pressureFactor;
 newdata.A1bGM0.hvelocity = A1bGM0.*(-1i*GM0).*velocityFactor;
-newdata.A1bGM0.vvelocity = bsxfun(@times,exp(1i*(d*GM0+sigma))./(cos(d*GM0+sigma)-cos(s*zetaGM0)).*zetaGM0,-sin(psiZetaGM0).*exp(-1i*phiGM0)).*velocityFactor;
+newdata.A1bGM0.vvelocity = bsxfun(@times,exp(1i*(d*GM0+sigma))./(cos(d*GM0+sigma)-cos(s*zetaGM0)).*zetaGM0,-sin(psiZetaGM0).*exp(-1i*xGM0)).*velocityFactor;
  
-A1aGM0 = bsxfun(@times,1./(-cos(d*GM0+sigma)+cos(s*zetaGM0)),cos(psiMinhZetaGM0).*exp(-1i*phiGM0));
+A1aGM0 = bsxfun(@times,1./(-cos(d*GM0+sigma)+cos(s*zetaGM0)),cos(psiMinhZetaGM0).*exp(-1i*xGM0));
 newdata.A1aGM0.acoustic = A1aGM0;
 newdata.A1aGM0.pressure = A1aGM0.*(GM0-PM0).*pressureFactor;
 newdata.A1aGM0.hvelocity = A1aGM0.*(-1i*GM0).*velocityFactor;
-newdata.A1aGM0.vvelocity = bsxfun(@times,-1./(cos(d*GM0+sigma)-cos(s*zetaGM0)).*zetaGM0,-sin(psiMinhZetaGM0).*exp(-1i*phiGM0)).*velocityFactor;
+newdata.A1aGM0.vvelocity = bsxfun(@times,-1./(cos(d*GM0+sigma)-cos(s*zetaGM0)).*zetaGM0,-sin(psiMinhZetaGM0).*exp(-1i*xGM0)).*velocityFactor;
 
-zetaPM0=mysqrt(omega5.*w,PM0);
+zetaPM0=mysqrt(omega.*w,PM0);
 psiZetaPM0=bsxfun(@times,Y,zetaPM0);
 psiMinhZetaPM0=bsxfun(@times,Y-s,zetaPM0);
  
-A1bPM0 = bsxfun(@times,exp(1i*(d*PM0+sigma))./(cos(d*PM0+sigma)-cos(s*zetaPM0)),cos(psiZetaPM0).*exp(-1i*phiPM0));
+A1bPM0 = bsxfun(@times,exp(1i*(d*PM0+sigma))./(cos(d*PM0+sigma)-cos(s*zetaPM0)),cos(psiZetaPM0).*exp(-1i*xPM0));
 newdata.A1bPM0.acoustic = A1bPM0;
 newdata.A1bPM0.pressure = 0;
 newdata.A1bPM0.hvelocity = A1bPM0.*(-1i*PM0).*velocityFactor;
-newdata.A1bPM0.vvelocity = bsxfun(@times,exp(1i*(d*PM0+sigma))./(cos(d*PM0+sigma)-cos(s*zetaPM0)).*zetaPM0,-sin(psiZetaPM0).*exp(-1i*phiPM0)).*velocityFactor;
+newdata.A1bPM0.vvelocity = bsxfun(@times,exp(1i*(d*PM0+sigma))./(cos(d*PM0+sigma)-cos(s*zetaPM0)).*zetaPM0,-sin(psiZetaPM0).*exp(-1i*xPM0)).*velocityFactor;
  
-A1aPM0 = bsxfun(@times,1./(-cos(d*PM0+sigma)+cos(s*zetaPM0)),cos(psiMinhZetaPM0).*exp(-1i*phiPM0));
+A1aPM0 = bsxfun(@times,1./(-cos(d*PM0+sigma)+cos(s*zetaPM0)),cos(psiMinhZetaPM0).*exp(-1i*xPM0));
 newdata.A1aPM0.acoustic = A1aPM0;
 newdata.A1aPM0.pressure = 0;
 newdata.A1aPM0.hvelocity = A1aPM0.*(-1i*PM0).*velocityFactor;
-newdata.A1aPM0.vvelocity = bsxfun(@times,-1./(cos(d*PM0+sigma)-cos(s*zetaPM0)).*zetaPM0,-sin(psiMinhZetaPM0).*exp(-1i*phiPM0)).*velocityFactor;
+newdata.A1aPM0.vvelocity = bsxfun(@times,-1./(cos(d*PM0+sigma)-cos(s*zetaPM0)).*zetaPM0,-sin(psiMinhZetaPM0).*exp(-1i*xPM0)).*velocityFactor;
 
 end

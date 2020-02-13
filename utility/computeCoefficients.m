@@ -37,10 +37,10 @@ finmatL=bsxfun(@rdivide,KPTP,permute(KpprTM,[1,2,4,3,5]));
 L= 1i*bsxfun(@rdivide,permute(TMd-PM0,[1,2,4,3,5]),TPminTM).*finmatL;
 
 finmatF=bsxfun(@rdivide,KMTM,permute(KmprTP,[1,2,4,3,5]));
-F=-exp(1i*permute(TPminTM,[1,2,4,3,5]))./(1i*permute(bsxfun(@times,TPd-PM0,TPminTM),[1,2,4,3,5])).*finmatF;
+F=-exp(2i*permute(TPminTM,[1,2,4,3,5]))./(1i*permute(bsxfun(@times,TPd-PM0,TPminTM),[1,2,4,3,5])).*finmatF;
 
 finmatV=bsxfun(@rdivide,1,permute(KmprTP,[1,2,4,3,5]));
-Vpre=exp(1i*TPminGM0)./(1i*permute(bsxfun(@times,(TPd-GM0),(TPd-PM0)),[1,2,4,3,5])).*finmatV;
+Vpre=exp(2i*TPminGM0)./(1i*permute(bsxfun(@times,(TPd-GM0),(TPd-PM0)),[1,2,4,3,5])).*finmatV;
 
 Vpreq= permute(Vpre,[4,3,5,1,2]);
 F1= permute(F,[4,3,5,1,2]);
@@ -60,10 +60,9 @@ coefdata.invmat=invmat;
 
 data.D1=computeD1Coefficients(coefdata);
 
-data.k5=kx;
-data.omega5=omega;
+data.kx=kx;
+data.omega=omega;
 data.M=ADData.M;
-%data.Amp5=AAData.Amp5;
 data.AAData=AAData;
 data.ADData=ADData;
 data.coefdata = coefdata;

@@ -31,14 +31,14 @@ Dterms = sum(Dfin,3);
 
 gModeFun = A1aPM0+A1bPM0;%A1aGM(:,:,ceil(end/2),:,:)+A1bGM(:,:,ceil(end/2),:,:);
 
-AsumG = -sum((data.D1.A+data.D1.C)./(1i*(TMd-PM0)).*KMTM./KMPM0.*exp(-1i*(TMd-PM0)),3);
+AsumG = -sum((data.D1.A+data.D1.C)./(1i*(TMd-PM0)).*KMTM./KMPM0.*exp(-2i*(TMd-PM0)),3);
 
 %ScoefsG = -(data.(sol).S)./(1i*(GMm-GM0)).*KMGM./KMGM0.*exp(-1i*(GMm-GM0));
 %Tterm = -data.D1.T./KPPM0;
 %ScoefsG(:,:,ceil(end/2),:,:)=Tterm(:,:,ceil(end/2),:,:);
 
 %SsumG = sum(ScoefsG,3);
-TtermsG = -data.D1.T.*KMGM0./KPGM0./KMPM0.*exp(-1i*(GM0-PM0));
+TtermsG = -data.D1.T.*KMGM0./KPGM0./KMPM0.*exp(-2i*(GM0-PM0));
 
 P =  AsumG + TtermsG ;
 

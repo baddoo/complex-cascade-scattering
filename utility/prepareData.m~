@@ -46,9 +46,10 @@ elseif isempty(kxDim)
     kxDim = (kx - M^2*omega)/Beta^2/semiChordDim;
 else
     kx = kxDim*Beta^2*semiChordDim + M^2*omega;
-    omega = kx*(1+1e-5i); % Give the frequency a small imaginary part
 end
 
+% Give the frequency a small imaginary part
+omega = kx*(1+1e-5i);
 
 ky = kyDim*semiChordDim/omega/Beta;
 kz = kzDim*semiChordDim/omega;
