@@ -1,4 +1,4 @@
-# Complex cascade acoustics
+# Complex cascade scattering
 
 This repository contains the codes used to produce the results in the paper
 ["Acoustic scattering by cascades with complex boundary conditions: compliance, porosity and impedance"](https://arxiv.org/abs/1911.09015).
