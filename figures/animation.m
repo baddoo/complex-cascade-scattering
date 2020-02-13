@@ -47,7 +47,7 @@ Modes=struct('comb',[1,1,1,1],...
              'amodes',15);
 
 [newADData,newAAData] = prepareData(ADData,AAData);         
-out = computeModes2(newADData,newAAData,Modes);
+out = computeModes(newADData,newAAData,Modes);
 
 %%
 xSurf = (1+sin(pi/2*linspace(-1,1)))/2;

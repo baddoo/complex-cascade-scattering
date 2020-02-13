@@ -6,10 +6,10 @@ AAData.w = 3;
 d = .9; s = .5;
 ADData.spac = [s,d];
 ADData.chie = atan(d/s);
-Modes.trunc = 400;
+Modes.trunc = 100;
 
 tol = 1e-3;
-for j = 1:3
+for j = 3
 
     figure(j)
     clf

@@ -1,4 +1,4 @@
-function output = computeModes2(ADData,AAData,Modes)
+function output = computeModes(ADData,AAData,Modes)
 
 %% Get data from structures
 he=ADData.spac(1); d=ADData.spac(2); se = ADData.spac(3);
@@ -9,7 +9,7 @@ amodes=Modes.amodes;
 R0 = 2*max([10,w*omega5,pi/se*abs(ADData.mu(1))]);
 chi = 0;
 if cos(chi)<0; error('The ellipse does not have the right parameters'); end
-[TP,TM,asymP] = findDuctModes2(R0,chi,ADData,AAData,Modes);
+[TP,TM,asymP] = findDuctModes(R0,chi,ADData,AAData,Modes);
 
 %% Define acoustic modes
 aTrunc = permute(-trunc:trunc,[1,3,2]);
