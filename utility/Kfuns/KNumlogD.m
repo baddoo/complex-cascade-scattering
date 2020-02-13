@@ -8,14 +8,14 @@ function KLD = KNumlogD(gamma,ADData,AAData)
 KLD = zeros(size(gamma));
 
 % Extract data from structures
-omega5 = AAData.omega5;
+omega = AAData.omega;
 w = AAData.w;
 he = ADData.spac(1);
 d = ADData.spac(2);
-sigma = AAData.sigma5;
+sigma = AAData.sigma;
 mu = ADData.mu; 
 
-zeta = @(x) mysqrt(omega5*w,x);
+zeta = @(x) mysqrt(omega*w,x);
 zg = zeta(gamma);
 
 if mu == zeros(size(mu))

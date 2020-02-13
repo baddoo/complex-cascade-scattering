@@ -7,14 +7,18 @@ nTol = 5;
 
 polyLogD = @(xVar,krV) sum(1./(xVar - permute(krV(:),[4,2,3,1])),4);
 argFun = @(xVar,Np,krV) (logD(xVar) - polyLogD(xVar,krV)).*xVar.^Np;
-%logD = argFun;
+
+% Define ellipse
 z = @(th,rV) rV.*(cos(th) + 1i*cos(chi)*sin(th));
 dzdth = @(th,rV) rV.*(-sin(th) + 1i*cos(chi)*cos(th));
+
+% Define integrand
 intFun = @(th,rV,Np,krV) dzdth(th,rV).*argFun(z(th,rV),Np,krV);
 
-% Count zeros in R0-circle
+% Define roots that are already known
 newKR = knownRootsInit;
 
+% Count zeros in R0-circle
 nInt = round(2*pi*R0);
 tInt = linspace(0,2*pi,nInt+1); tInt(end) = [];
 tInt0 = tInt; nInt0 = nInt;

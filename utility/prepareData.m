@@ -1,77 +1,88 @@
-function [newADData,newAAData] = prepareData(ADData,AAData,Modes)
+function [newADData,newAAData] = prepareData(ADData,AAData)
 
 newADData = ADData;
 newAAData = AAData;
 
 M = ADData.M;
-U = M*ADData.c0;
+Udim = M*ADData.c0;
+Wdim = ADData.Wdim;
 Beta = sqrt(1-M^2);
 newADData.Beta = Beta;
-delta = 1/Beta^2;
-newADData.delta = delta;
-physC = ADData.physC;
+chordDim = ADData.chordDim;
+semiChordDim = chordDim/2;
+omegaDim = AAData.omegaDim;
+kxDim = AAData.kxDim;
+kyDim = AAData.kyDim;
+kzDim = AAData.kzDim;
 
+s = ADData.spacDim(1)*Beta/semiChordDim; % Update space with PG transformation and non-dim
+d = ADData.spacDim(2)/semiChordDim;
 
-he = ADData.spac(1)*Beta; % Update space with PG transformation and non-dim
-d = ADData.spac(2);
+newADData.spac(1) = s;
+newADData.spac(2) = d;
+
+newADData.spac(3) = sqrt(d^2+s^2); % Do PG transformation
+newADData.chie = atan(d/s); % Do PG transformation
 
 % if isempty(AAData.k)
 %     omega = AAData.omega;
 %     k = omega.*physC/(2*U);
 % elseif isempty(AAData.omega)
-k = AAData.k;
-omega = AAData.omega;
 %     omega=k./ADData.physC.*(2*U);    
 % end
+omega = semiChordDim/Udim*(omegaDim - Wdim*kzDim);
 
-if isempty(AAData.kn)
+if strcmp(kxDim,'gust')
+    kx = omega;
+else
+    kx = kxDim*Beta^2*semiChordDim + M^2*omega;
+end
+
+ky = kyDim*semiChordDim/omega/Beta;
+kz = kzDim*semiChordDim/omega;
+
+if isempty(AAData.kyDim)
     sigmao = AAData.sigmao;
-    sigma= d*omega*delta*M^2 + sigmao;
-    kn =  (sigma - k*delta*d)/(omega*he);
+    sigma= d*omega*(M/Beta)^2 + sigmao;
+    ky =  (sigma - kx/Beta^2*d)/(omega*s);
 elseif isempty(AAData.sigmao)
-    kn = AAData.kn;
-    sigma = k*delta*d + omega*kn*he;
-    sigmao= sigma - d*omega*delta*M^2;
+    ky = AAData.kn;
+    sigma = kx/Beta^2*d + omega*ky*s;
+    sigmao= sigma - d*omega*(M/Beta)^2;
 end    
 
-newAAData.kn = kn;
-k = AAData.k;
-omega = AAData.omega;
+newAAData.sigma = sigma;
+newAAData.sigmao = sigmao;
+newAAData.omega = omega;
+newAAData.kx = kx;
+newAAData.ky = ky;
+newAAData.kz = kz;
 
-newADData.spac(1) = he;
-newADData.spac(2) = d;
+newAAData.Amp = [0,1i*omega*ky,0];
 
-newADData.spac(3) = sqrt(d^2+he^2); % Do PG transformation
-newADData.chie = atan(d/he); % Do PG transformation
-
-newAAData.sigma5 = reshape(sigma,[1 1 1 1 numel(sigma)]);
-newAAData.sigmao5 = reshape(sigmao,[1 1 1 1 numel(sigmao)]);
-
-newAAData.k5 = reshape(k,[1 1 1 1 numel(k)]);
-newAAData.omega5 = reshape(omega,[1 1 1 1 numel(omega)]);
-
-newAAData.Amp5 = [0,1i*newAAData.omega5*kn,0];
-
-w=mysqrt(M*delta,newAAData.kz/Beta); 
+w=mysqrt(M/Beta^2,kz/Beta); % Need to spanwise flow terms.
 newAAData.w=w;
 
 C = ADData.C;
-if strcmp(ADData.case,'I')
+
+switch ADData.case
+    case 1
     
-   mu = C*[1,0,0];
+        mu = C*[1,0,0];
    
-elseif strcmp(ADData.case,'II')
+    case 2
     
-    mu0 = 1i*omega*delta;
-    mu1 = -1;
-    mu = C*[mu0,mu1,0];
+        mu0 = 1i*omega/Beta^2;
+        mu1 = -1;
+        mu = C*[mu0,mu1,0];
     
-elseif strcmp(ADData.case,'III')   
+    case 3
     
-    mu0 = -2*omega^2;
-    mu1 = -2i*M^2*omega; 
-    mu2 = 1;
-    mu = C*[mu0,mu1,mu2];
+        % Need to complete    
+        mu0 = -2*omega;
+        mu1 = -2i*M^2*omega; 
+        mu2 = 1;
+        mu = C*[mu0,mu1,mu2];
     
 end
 

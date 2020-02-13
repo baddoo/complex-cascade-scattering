@@ -12,28 +12,27 @@ sPhys = ADData.spac(1)/Beta;
 Yper = funPer(Y.',sPhys,nP);
 Xper = funPer(X.',dPhys,nP);
 
-delta = ADData.delta;
-kx = AAData.k;
-kn = AAData.kn;
+kx = AAData.kx;
+ky = AAData.ky;
 omega = AAData.omega;
 M = ADData.M;
 
-GM0 = -delta.*kx;
-PM0 = -delta.*omega;
+GM0 = -kx/Beta^2;
+PM0 = -omega/Beta^2;
 
-hInc = exp(1i*(-GM0.*X + omega*kn*Y.*Beta));
+hInc = exp(1i*(-GM0.*X + omega*ky*Y.*Beta));
 
 if strcmp(type,'acoustic')
-    pangle = AAData.sigma5;
+    pangle = AAData.sigma;
     hIncFin = hInc;
 elseif strcmp(type,'hvelocity')
     pangle = AAData.sigmao5;
     hIncFin = (-1i*GM0+1i*M^2*PM0).*hInc.*exp(1i*M^2*PM0.*X);
 elseif strcmp(type,'vvelocity')
-    pangle = AAData.sigmao5;
-    hIncFin = (1i*omega*kn).*hInc.*exp(1i*M^2*PM0.*X);
+    pangle = AAData.sigmao;
+    hIncFin = (1i*omega*ky).*hInc.*exp(1i*M^2*PM0.*X);
 elseif strcmp(type,'pressure')
-    pangle = AAData.sigmao5;
+    pangle = AAData.sigmao;
     hIncFin = (-1i*GM0+1i*PM0).*hInc.*exp(1i*M^2*PM0.*X);
 elseif strcmp(type,'source')
     pangle = AAData.sigma;
@@ -43,7 +42,6 @@ end
 
 h2 = funPerMult(h.',exp(1i*pangle),nP);
 hIncFinPer = funPerMult(hIncFin.',exp(1i*pangle),nP);
-
 
 rot=exp(1i*atan(dPhys/sPhys));
 newcoord = (Xper+1i*Yper)*rot;
@@ -72,7 +70,7 @@ axis equal
 ax = gca;
 ylims = ax.YLim;
 drawArrow = @(x,y,varargin) quiver( x(1),y(1),x(2)-x(1),y(2)-y(1),0,'MaxHeadSize',1, varargin{:} );       
-b = omega*kn*Beta; a = (-GM0+M^2*PM0);
+b = omega*ky*Beta; a = (-GM0+M^2*PM0);
 l = rot.*(a+1i*b);
 drawArrow(.99*xlims(1)+[0,sqrt(1)*cos(angle(l))],.9*ylims(1) + [0,sqrt(1)*sin(angle(l))],'linewidth',3,'color','k')
 

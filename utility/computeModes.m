@@ -1,20 +1,20 @@
 function output = computeModes(ADData,AAData,Modes)
 
 %% Get data from structures
-he=ADData.spac(1); d=ADData.spac(2); se = ADData.spac(3);
-trunc=Modes.trunc; w=AAData.w; sigma5=AAData.sigma5;
-k5=AAData.k5; omega5 = AAData.omega5; chie = ADData.chie; delta = ADData.delta;
-amodes=Modes.amodes;
+he=ADData.spac(1); d=ADData.spac(2); del = ADData.spac(3);
+trunc=Modes.trunc; w=AAData.w; sigma=AAData.sigma;
+kx=AAData.kx; omega = AAData.omega; chie = ADData.chie;
+Beta = ADData.Beta; amodes=Modes.amodes;
 %% Define duct mods
-R0 = 2*max([10,w*omega5,pi/se*abs(ADData.mu(1))]);
+R0 = 2*max([10,w*omega,pi/del*abs(ADData.mu(1))]);
 chi = 0;
 if cos(chi)<0; error('The ellipse does not have the right parameters'); end
 [TP,TM,asymP] = findDuctModes(R0,chi,ADData,AAData,Modes);
 
 %% Define acoustic modes
 aTrunc = permute(-trunc:trunc,[1,3,2]);
-f=(bsxfun(@minus,sigma5,2*pi*aTrunc))/se;
-SQRT=mysqrt(w*omega5,f); output.SQRT=SQRT;
+f=(bsxfun(@minus,sigma,2*pi*aTrunc))/del;
+SQRT=mysqrt(w*omega,f); output.SQRT=SQRT;
 LM=-f*sin(chie)-cos(chie)*SQRT;
 LP=-f*sin(chie)+cos(chie)*SQRT;
 
@@ -24,8 +24,8 @@ dmodes = Modes.dmodes;
 TMd = TM(:,:,(1:dmodes),:,:);
 TPd = TP(:,:,(1:dmodes),:,:);
 
-ZM= -(sigma5+d*LM-2*pi*permute(-trunc:trunc,[1,3,2,4,5]))/he;
-ZP=  (sigma5+d*LP-2*pi*permute(-trunc:trunc,[1,3,2,4,5]))/he;
+ZM= -(sigma+d*LM-2*pi*permute(-trunc:trunc,[1,3,2,4,5]))/he;
+ZP=  (sigma+d*LP-2*pi*permute(-trunc:trunc,[1,3,2,4,5]))/he;
 
 LMa= LM(:,:,(ceil(end/2)-amodes):(ceil(end/2)+amodes),:,:); 
 LPa= LP(:,:,(ceil(end/2)-amodes):(ceil(end/2)+amodes),:,:); 
@@ -43,8 +43,8 @@ KPTP=permute(Kplus(permute(TPd,[3,2,1,4,5]),Kargs),[3,2,1,4,5]);
 KMLM=permute(Kminus(permute(LMa,[3,2,1,4,5]),Kargs),[3,2,1,4,5]);
 KPLP=permute(Kplus(permute(LPa,[3,2,1,4,5]),Kargs),[3,2,1,4,5]); 
 
-GM0 = -real(k5)*delta;
-PM0 = -real(omega5)*delta;
+GM0 = -real(kx)/Beta^2;
+PM0 = -real(omega)*Beta^2;
 
 output.GM0 = GM0;
 output.PM0 = PM0;
@@ -95,8 +95,8 @@ output.ZPa =    ZPa;
 output.Kargs=   Kargs;
 output.TMd =    TMd;
 output.TPd =    TPd;
-output.zGM0 = mysqrt(omega5*w,GM0);
-output.zPM0 = mysqrt(omega5*w,PM0);
+output.zGM0 = mysqrt(omega*w,GM0);
+output.zPM0 = mysqrt(omega*w,PM0);
 
 output.KMTM=    KMTM;
 output.KPTP=    KPTP;
@@ -114,7 +114,7 @@ output.TP =     TP;
 output.TM=      TM;
 output.spac=    ADData.spac;
 output.Beta=    ADData.Beta;
-output.sigma5=   AAData.sigma5;
+output.sigma=   AAData.sigma;
 output.w =      AAData.w;
 output.SQRTa=   SQRTa;
 

@@ -2,7 +2,7 @@ function [data] = computeCoefficients(ADData,AAData,out)
 
 %% Extract data.
 data=out;
-k5=AAData.k5; omega5=AAData.omega5;
+kx=AAData.kx; omega=AAData.omega;
 KMTM=out.KMTM; KPTP=out.KPTP;
 TMd=out.TMd; TPd = out.TPd;
 LMa=out.LMa; LPa = out.LPa; 
@@ -15,7 +15,6 @@ KpprTM=out.KpprTM; KmprTP=out.KmprTP;
 
 coefdata=out;
 coefdata.AAData = AAData;
-%coefdata.Amp5=AAData.Amp5;
 coefdata.Beta=ADData.Beta;
 
 %% Define differences between modes
@@ -51,7 +50,7 @@ coefdata.F1= F1;
 coefdata.Vpreq= Vpreq;
 coefdata.L1= L1;
 
-nfreq=length(k5);
+nfreq=length(kx);
 invmat=zeros(size(F1));
 
 for ifreq = 1:nfreq
@@ -61,9 +60,8 @@ coefdata.invmat=invmat;
 
 data.D1=computeD1Coefficients(coefdata);
 
-data.k5=k5;
-data.omega5=omega5;
-data.delta=ADData.delta;
+data.k5=kx;
+data.omega5=omega;
 data.M=ADData.M;
 %data.Amp5=AAData.Amp5;
 data.AAData=AAData;
