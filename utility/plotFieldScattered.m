@@ -4,6 +4,7 @@ nP=12;
 
 Beta = ADData.Beta; % PG factor
 semiChordDim = ADData.chordDim/2;
+
 % Put back into dimensional variables
 X = plotData.X*semiChordDim;
 Y = plotData.Y*semiChordDim./Beta; % Undo PG transformation.
@@ -37,7 +38,7 @@ end
 
 h2 = funPerMult(h.',exp(1i*pangle),nP);
 
-rot=exp(0i*atan(dDim/sDim));
+rot=exp(1i*atan(dDim/sDim));
 newcoord = (Xper+1i*Yper)*rot;
 
 h=pcolor(real(newcoord),imag(newcoord),real(h2));
@@ -56,9 +57,9 @@ for l = -nP:nP
    plot(real(rot*loc),imag(rot*loc),'k','LineWidth',3) 
 end
 
-xlims = [-2*real(rot),3*real(rot)];
-xlim(xlims);
 axis equal
+xlims = 2*semiChordDim*[-2*real(rot),3*real(rot)];
+xlim(xlims);
 ax = gca;
 ylims = ax.YLim;
 drawArrow = @(x,y,varargin) quiver( x(1),y(1),x(2)-x(1),y(2)-y(1),0,'MaxHeadSize',1, varargin{:} );       

@@ -3,14 +3,16 @@ function plotField(h,ADData,AAData,plotData,type)
 nP=12;
 
 Beta = ADData.Beta; % PG factor
+semiChordDim = ADData.chordDim/2;
 
-X = plotData.X;
-Y = plotData.Y./Beta; % Undo PG transformation.
-dPhys = ADData.spac(2);
-sPhys = ADData.spac(1)/Beta;
+% Put back into dimensional variables
+X = plotData.X*semiChordDim;
+Y = plotData.Y*semiChordDim./Beta; % Undo PG transformation.
+sDim = ADData.spacDim(1);
+dDim = ADData.spacDim(2);
 
-Yper = funPer(Y.',sPhys,nP);
-Xper = funPer(X.',dPhys,nP);
+Yper = funPer(Y.',sDim,nP);
+Xper = funPer(X.',dDim,nP);
 
 kx = AAData.kx;
 ky = AAData.ky;
@@ -43,7 +45,7 @@ end
 h2 = funPerMult(h.',exp(1i*pangle),nP);
 hIncFinPer = funPerMult(hIncFin.',exp(1i*pangle),nP);
 
-rot=exp(1i*atan(dPhys/sPhys));
+rot=exp(1i*atan(dDim/sDim));
 newcoord = (Xper+1i*Yper)*rot;
 
 h=pcolor(real(newcoord),imag(newcoord),real(h2 + hIncFinPer));
@@ -60,11 +62,12 @@ if isfield(plotData,'colorbar'); colorbar; end
 
 
 for l = -nP:nP
-    loc = ([0,1]+l*dPhys)+1i*l*[sPhys,sPhys];
+    loc = ([0,2*semiChordDim]+l*dDim)+1i*l*[sDim,sDim];
    plot(real(rot*loc),imag(rot*loc),'k','LineWidth',3) 
 end
 
-xlims = [-2*real(rot),3*real(rot)];
+axis equal
+xlims = 2*semiChordDim*[-2*real(rot),3*real(rot)];
 xlim(xlims);
 axis equal
 ax = gca;

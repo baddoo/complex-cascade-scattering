@@ -37,16 +37,16 @@ Modes=struct('comb',[1,1,1,1],...
 [newADData,newAAData] = prepareData(ADData,AAData);         
 out = computeModes(newADData,newAAData,Modes);
 %%
-xSurf = (1+sin(pi/2*linspace(-1,1))); %xSurf(1) = []; xSurf(end) = [];
+xSurf = chordDim*(1+sin(pi/2*linspace(-1,1)))/2; %xSurf(1) = []; xSurf(end) = [];
 
 data=computeCoefficients(newADData,newAAData,out);
-x = [linspace(-4,0,100),xSurf,linspace(2,6,100)];
-y = newADData.spac(1)*(1+sin(linspace(-1,1,50)*pi/2))/2;
+x = chordDim*[linspace(-4,0,100),xSurf,linspace(chordDim,6,100)];
+y = chordDim*newADData.spac(1)*(1+sin(linspace(-1,1,50)*pi/2))/2;
 [X,Y] = meshgrid(x,y);
 
 plotData = struct('X',X,...
                   'Y',Y,...
-                  'axisLimits',[-3,3,-2,2]);              
+                  'axisLimits',chordDim*[-3,3,-2,2]);              
 tic            
 newData=computeExponents(data,plotData);
 toc
