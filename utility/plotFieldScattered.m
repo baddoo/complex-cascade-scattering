@@ -41,7 +41,7 @@ h2 = funPerMult(h.',exp(1i*pangle),nP);
 rot=exp(1i*atan(dDim/sDim));
 newcoord = (Xper+1i*Yper)*rot;
 
-h=pcolor(real(newcoord),imag(newcoord),real(h2));
+h=pcolor(real(newcoord),imag(newcoord),(real(h2)));
 set(h, 'EdgeColor', 'none');
 
 hold on 

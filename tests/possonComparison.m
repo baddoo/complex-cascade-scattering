@@ -16,8 +16,8 @@ ADData=struct('spacDim',     [sDim,dDim],... %Dimensional blade spacing
               'c0',          340,...         %Speed of sound
               'M',           0.2,...           %Mach number 
               'Wdim',        0,...           %Spanwise background velocity
-              'case',        2, ...              %Case
-              'C',           .01);                 %Coefficient of case                       
+              'case',        1, ...              %Case
+              'C',           1e-3);                 %Coefficient of case                       
              
 %% Aeroacoustic Data
 AAData=struct( 'omegaDim',    [],...                 %Time Frequency

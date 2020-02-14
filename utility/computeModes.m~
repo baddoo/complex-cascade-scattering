@@ -14,15 +14,9 @@ if cos(chi)<0; error('The ellipse does not have the right parameters'); end
 % Remove the largest roots so we have as many duct modes as acoustic modes
 if numel(TP)>2*trunc+1
 TP = mink(TP,2*trunc+1,'ComparisonMethod','abs');
-else
-trunc = (min(numel(TP),numel(TM))-1)/2;
-end
-if numel(TM)>2*trunc+1
+elseif 
 TM = mink(TM,2*trunc+1,'ComparisonMethod','abs');
-else
-trunc = (min(numel(TP),numel(TM))-1)/2;
-end
-Modes.trunc = trunc;
+
 %% Define acoustic modes
 aTrunc = permute(-trunc:trunc,[1,3,2]);
 f=(bsxfun(@minus,sigma,2*pi*aTrunc))/del;
