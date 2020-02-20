@@ -1,0 +1,22 @@
+ \begin{tikzpicture}[%
+trim axis left, trim axis right
+]
+ \begin{axis}[
+  set layers,
+%  axis on top = false,
+  gridData
+  boxData
+ylabel near ticks,
+xlabel near ticks,
+ width=\fwidth,
+ height=\fheight,
+ at={(0,0)},
+scale only axis,
+enlargelimits=false,
+axis on top,
+xlabel={XLabel},
+ylabel={YLabel}]
+\addplot graphics[xmin=xlim1,xmax=xlim2,ymin=ylim1,ymax=ylim2] {imagefile.eps};
+
+    \end{axis}
+    \end{tikzpicture}

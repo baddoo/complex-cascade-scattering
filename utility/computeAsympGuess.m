@@ -17,11 +17,11 @@ switch ADData.case
 
     case 1
     a0q1  = 2i*pi*expMC/del;
-    a1q1  = -expMC/del;
+    a1q1  =      -expMC/del;
     a2q1  = (1i*(pi/2 + chie - sigma) - log(2*pi/mu(1)/del))*expMC./del;
     
     a0q2 = 2i*pi*expPC/del;
-    a1q2 =  expPC/del;
+    a1q2 =       expPC/del;
     a2q2 = (1i*(pi/2 + chie + sigma) + log(2*pi/mu(1)/del))*expPC./del;
     
     a2q3 = (-1i*(pi/2 + chie + sigma) + log(2*pi/mu(1)/del))*expMC./del;

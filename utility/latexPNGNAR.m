@@ -52,7 +52,7 @@ box off
 %fig.Renderer='painters';
 %saveas(gca,strcat(folder,imagename,'.eps'),'epsc');
 %print(strcat(folder,imagename,'.png'),'-dpng','-r100');
-print([folder,imagename],'-r50','-opengl','-dpng'); 
+print([folder,imagename],'-r250','-opengl','-dpng'); 
 
 newtext = strrep(newtext,'eps','png');
 %figure('PaperPositionMode', 'auto')

@@ -16,17 +16,20 @@ ADData=struct('spacDim',     [sDim,dDim],... %Dimensional blade spacing
               'c0',          340,...         %Speed of sound
               'M',           0.2,...           %Mach number 
               'Wdim',        0,...           %Spanwise background velocity
-              'case',        1, ...              %Case
-              'C',           .1);                 %Coefficient of case                       
+              'case',        2, ...              %Case
+              'C',           -.2623-0.0244i);                 %Coefficient of case                       
              
 %% Aeroacoustic Data
 AAData=struct( 'omegaDim',    [],...                 %Time Frequency
-               'omega',       5,...                 %Time Frequency
+               'omega',       50*(1+1e-3i),...                 %Time Frequency
                'kxDim',       [],...                   %Tangential frequency
-               'kx',          10,...                   %Tangential frequency
+               'kx',          20,...                   %Tangential frequency
+               'ky',          [],...
                'kyDim',       [],...                       %Normal frequency
-               'kzDim',       0,...                       %Spanwise frequency
+               'kzDim',       [],...                       %Spanwise frequency
+               'kz',          0,...
                'sigmao',      3*pi/4,...                  %Interblade phase angle in (x,y)-space
+               'sigma',       [],...
                'Amp',         [nan,1,nan]); %Amplitude of gust in form [At,An,A3]
 %% Information about Modes            
 Modes=struct('comb',[1,1,1,1],...
@@ -40,9 +43,6 @@ out = computeModes(newADData,newAAData,Modes);
 xSurf = chordDim*(1+sin(pi/2*linspace(-1,1)))/2; %xSurf(1) = []; xSurf(end) = [];
 
 data=computeCoefficients(newADData,newAAData,out);
-x = chordDim*[linspace(-2,0,100),xSurf,linspace(chordDim,chordDim+4,100)];
-y = chordDim*newADData.spac(1)*(1+sin(linspace(-1,1,250)*pi/2))/2;
-[X,Y] = meshgrid(x,y);
 Z = linspace(-2,3,200) + linspace(0,newADData.spac(3)).'*1i*exp(-1i*newADData.chie);
 X = real(Z); Y = imag(Z);
 plotData = struct('X',X,...
@@ -57,5 +57,5 @@ h=computeField(newData,type);
 %%
 figure(1)
 
-plotField(h,newADData,newAAData,plotData,type)
+plotFieldScattered(h,newADData,newAAData,plotData,type)
 caxis(1*[-5,5])

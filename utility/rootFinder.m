@@ -19,7 +19,7 @@ intFun = @(th,rV,Np,krV) dzdth(th,rV).*argFun(z(th,rV),Np,krV);
 newKR = knownRootsInit;
 
 % Count zeros in R0-circle
-nInt = round(2*pi*R0);
+nInt = 1e2*round(2*pi*R0);
 tInt = linspace(0,2*pi,nInt+1); tInt(end) = [];
 tInt0 = tInt; nInt0 = nInt;
 integrandError = norm(intFun(tInt0,R0,0,newKR),'inf');

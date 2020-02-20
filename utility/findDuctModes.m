@@ -15,9 +15,10 @@ loc = abs(knownRootsInit)<2*R0;
 allRootsUnique = rootFinder(f,logD,knownRootsInit(loc),R0,chi,tol);
 allRootsUnique = [allRootsUnique;knownRootsInit(~loc).'];
 
-% Separate into components in the upper and lower half planes
-TP = sort(allRootsUnique(imag(allRootsUnique)>=0));
-TM = sort(allRootsUnique(imag(allRootsUnique)<0));
+% Separate into components in the upper and lower half planes according to
+% imaginary parts of omega and kx.
+TP = sort(allRootsUnique(imag(allRootsUnique)>=-0*min(imag([AAData.kx,AAData.omega]/ADData.Beta.^2))));
+TM = sort(allRootsUnique(imag(allRootsUnique)< -0*min(imag([AAData.kx,AAData.omega]/ADData.Beta.^2))));
 
 % Reshape into third dimension
 TP3 = permute(TP,[3,2,1]);

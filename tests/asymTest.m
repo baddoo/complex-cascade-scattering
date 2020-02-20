@@ -6,10 +6,11 @@ AAData.w = 3;
 d = .9; s = .5;
 ADData.spac = [s,d];
 ADData.chie = atan(d/s);
+AAData.sigma = 1; AAData.omega = 10;
 Modes.trunc = 100;
 
 tol = 1e-3;
-for j = 3
+for j = 1:3
 
     figure(j)
     clf
@@ -30,6 +31,7 @@ end
 f = @(xVar) 1./KNumlogD(xVar,ADData,AAData);
 logD = @(xVar) KNumlogD(xVar,ADData,AAData);
 
+ADData.case = j;
 asympGuess = computeAsympGuess(ADData,AAData,Modes);
 knownRootsInit = newtonKRoots(asympGuess,f,logD,tol,[]);
 

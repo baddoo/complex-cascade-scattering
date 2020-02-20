@@ -1,66 +1,88 @@
-vaneDist = .6;
-stagAng = 40;
 
-C1 = [.1,.1,3];
-addpath('matlab2tikz/src','cfe')
-imageFolder = '../../images/';
+imageFolder = '../../../LaTeX/porous-jfm-r1/images/';
 
-d = vaneDist*sin(stagAng*pi/180);
-s = vaneDist*cos(stagAng*pi/180);
+chordDim = 1;
+semiChordDim = chordDim/2;
+vaneDistDim = 0.6*chordDim;
+stagAngDim = 30;
 
-omega = 25*(1 + 1e-15i);
-ky = .1;
-zy = -omega*ky;
-M = 0.3;
-m = 0;
-kz = 0;
-Beta = sqrt(1-M^2); delta = 1/Beta^2;
-w=mysqrt(M*delta,kz/Beta); 
+dDim = vaneDistDim*sin(stagAngDim*pi/180);
+sDim = vaneDistDim*cos(stagAngDim*pi/180);
 
-kx = 1/delta*mysqrt(omega*w,(s*Beta*zy+2*m*pi)/(s*Beta));
+c0 = 340;
+M = 0.2;
+Beta = sqrt(1-M^2);
 
-if imag(kx)>1e-2, warning('The mode is not cut-on.'); return; end
+% Define Rayleigh conductivity
+RDim = .02*semiChordDim; % Define radius of aperture
+howeReducedFreq = .5; % Set Howe's reduced frequency
+omega = howeReducedFreq*semiChordDim/RDim*(1+1e-3i); % Define my omega
+%KR = 2*RDim*(0.096 - 1i*1.030); % 1
+%KR = 2*RDim*(1.252 - 1i*0.705);% 2 
+KR = 2*RDim*(-.243 - 1i*.264); % .5
+%KR = 2*RDim*(1.015+1i*0.127); % 3.5
+%KR = 0.928 + 1i*.0385; % Define Rayleigh conductivity from Howe 1996 tables
+alphaH = [.05,.1]; % Define open area fractions
 
-sigma = kx*delta*d + ky*omega*(s*Beta);
-sigmaTest = -(s*Beta)*zy + d*mysqrt(omega*w,(Beta*s*zy+2*m*pi)/(Beta*s));
-sigmao = sigma - d*omega*M^2*delta;
+N = alphaH/(pi*RDim^2);
 
-for l1 = 1%[1,2,3]
+CII = -2*alphaH*KR/(1i*omega*pi*RDim^2);
+CII = [1e-4,CII];
+
+% d = dDim/semiChordDim;
+% s = sDim/semiChordDim*Beta;
+% del = sqrt(s^2+d^2); chie = atan(d/s);
+
+% x0 = [0,0,0];
+% l = @(xVar) (root(xVar,del,w,omega,chie,d,s));
+% options = optimoptions('fsolve','MaxFunctionEvaluations',1e3);
+% 
+% x = fsolve(l,x0,options);
+% lambdaM0 = x(1);
+% zetaM0 = x(2);
+% sigma = x(3);
+sigma = -3*pi/4;
+kx = 5;
+
+for l1 = [1,2,3]
 %l
 %%
-ADData=struct('spac',   [s,d],...%Blade Spacing [h,d]
-              'physC',   1,...                          %Blade length
-              'c0',      340,...                        %Speed of sound
+ADData=struct('spacDim', [sDim,dDim],...%Blade Spacing [h,d]
+              'chordDim',chordDim,...                          %Blade length
+              'c0',      c0,...                        %Speed of sound
               'M',       M,...                         %Mach number 
-              'case',    'II', ...                       %Case
-              'C',       C1(l1));                            %Coefficient of case                       
+              'Wdim',    0,...
+              'case',    2, ...                       %Case
+              'C',       CII(l1));                            %Coefficient of case                       
              
 %% Aeroacoustic Data
-AAData=struct( 'omega',    omega,...                      %Tangential Frequency
-               'kn',       [],...                       %Normal frequency
-               'k',        kx,...
-               'kz',       kz,...                       %Spanwise frequency
-               'sigmao',   sigmao,...                  %Interblade phase angle in (x,y)-space
+AAData=struct( 'omegaDim', [],...
+               'omega',    omega*(1 + 1e-7i),...                      %Tangential Frequency
+               'kx',       kx*(1 + 1e-7i),...
+               'kxDim',    [],...
+               'ky',       [],...                       %Normal frequency
+               'kyDim',    [],...
+               'kz',       0,...                       %Spanwise frequency
+               'kzDim',    [],...                       %Spanwise frequency
+               'sigma',    sigma,...                  %Interblade phase angle in (x,y)-space
+               'sigmao',   [],...                  %Interblade phase angle in (x,y)-space
                'Amp',      [nan,1,nan]); %Amplitude of gust in form [At,An,A3]
 %% Information about Modes            
 Modes=struct('comb',[1,1,1,1],...
-             'trunc',500,...                     %Truncation of kernel modes
-             'dmodes',35,...                      %Number of duct mode
-             'amodes',35);
+             'trunc',100,...                     %Truncation of kernel modes
+             'dmodes',15,...                      %Number of duct mode
+             'amodes',15);
 
 [newADData,newAAData] = prepareData(ADData,AAData);         
-%tic
-%out = computeModes(newADData,newAAData,Modes); toc  
-%tic
-out = computeModes2(newADData,newAAData,Modes);
-%toc
+out = computeModes(newADData,newAAData,Modes);
+
 %%
 xSurf = (1+sin(pi/2*linspace(-1,1)))/2;
 
 data=computeCoefficients(newADData,newAAData,out);
-x = [linspace(-6,0,100),xSurf,linspace(1,7,100)];
-y = newADData.spac(1)*(1+sin(linspace(-1,1,50)*pi/2))/2;
-[X,Y] = meshgrid(x,y);
+
+Z = linspace(-4,6,100) + linspace(0,newADData.spac(3),100).'*1i*exp(-1i*newADData.chie);
+X = real(Z); Y = imag(Z);
 
 plotData = struct('X',X,...
                   'Y',Y,...
@@ -75,8 +97,9 @@ h=computeField(newData,type);
 figure(5)
 
 plotField(h,newADData,newAAData,plotData,type)
-%caxis([-30,30])
+caxis(.5*[-100,100])
 latexPNG(['trans-',num2str(l1)],imageFolder,gca);
+
 %%
 LPa = permute(out.LPa,[3,2,1]);
 LMa = permute(out.LMa,[3,2,1]);
@@ -90,37 +113,36 @@ data.comb = [0 1 0 1];
 DLM = D(LMa,data);
 
 Beta = newADData.Beta;
-%s = sqrt(newADData.spac(1).^2+newADData.spac(2)^2);
 se = newADData.spac(3);
 
 R = pi*abs(ZPa.*DLP./SQRTa./se);
-T = pi*abs(ZMa.*DLM./SQRTa./se.*exp(-1i*LMa));
-T(ceil(end/2))=T(ceil(end/2))+1;
+T = pi*abs(ZMa.*DLM./SQRTa./se.*exp(-2i*LMa));
+T(ceil(end/2))=T(ceil(end/2));
 
 modeNum = 2;
 
-locs = find(abs(imag(LMa(floor(end/2)-modeNum+1:floor(end/2)+modeNum+1)))>1e-1);
+locs = find(abs(imag(LMa(floor(end/2)-modeNum+1:floor(end/2)+modeNum+1)))>1e-2);
 
 num = numel(LMa);
 x = -modeNum:modeNum;
 
-% figure(2)
+ figure(2)
 % %clf
-% b=bar(x,abs([R(floor(end/2)-modeNum+1:floor(end/2)+modeNum+1), ...
-%          T(floor(end/2)-modeNum+1:floor(end/2)+modeNum+1)]) ,...
-%          'FaceColor','flat');
+ b=bar(x,abs([R(floor(end/2)-modeNum+1:floor(end/2)+modeNum+1), ...
+          T(floor(end/2)-modeNum+1:floor(end/2)+modeNum+1)]) ,...
+          'FaceColor','flat');
 % 
-% cols = lines;   
+ cols = lines;   
 %      
-% b(1).CData(locs,:) = b(1).CData(locs,:)+.4;   
-% b(2).CData(locs,:) = b(2).CData(locs,:)+.4;     
-% xlabel('Mode number, m ')
-% ylabel('$\left| R_m \right|, \left| T_m \right|$')
+ b(1).CData(locs,:) = b(1).CData(locs,:)+.4;   
+ b(2).CData(locs,:) = b(2).CData(locs,:)+.4;     
+ xlabel('Mode number, m ')
+ ylabel('$\left| R_m \right|, \left| T_m \right|$','Interpreter','Latex')
 % 
 % cleanfigure
-% ylim([0,1.5])
+ ylim([0,2])
 % %%matlab2tikz([imageFolder,'tr-',num2str(l1),'.tex'], 'height', '\fheight', 'width', '\fwidth','parseStrings',false,'extratikzpictureoptions','trim axis left, trim axis right');
-% latexPNGNAR(['tr-',num2str(l1)],imageFolder,gca);
+latexPNGNAR(['tr-',num2str(l1)],imageFolder,gca);
 %close
 end
 %%
@@ -159,6 +181,7 @@ se = newADData.spac(3);
 R = pi*abs(ZPa.*DLP./SQRTa./se);
 T = pi*abs(ZMa.*DLM./SQRTa./se.*exp(-1i*LMa));
  
+% Normalise
 Rs(:,l) = R(ceil(end/2):ceil(end/2)+1);
 Ts(:,l) = T(ceil(end/2):ceil(end/2)+1);
 end
@@ -195,3 +218,14 @@ matlab2tikz([imageFolder,'trc-log.tex'], 'height', '\fheight', 'width', '\fwidth
 %xlim([.0,.1])
 ylim([0,1])
 %%axis([-inf,1,1e-2,1])
+
+function F = root(x,del,w,omega,chie,d,s)
+
+f = (x(3)-2*pi)/del;
+mysq = mysqrt(w*omega,f);
+
+F(1) = (x(1) - (-f*sin(chie) - cos(chie)*mysq));
+F(2) = (x(2) - (-(x(3) + d*x(1)-2*pi))/s);
+F(3) = (x(3) - (-d*x(1) - s*x(2)));
+
+end

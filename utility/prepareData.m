@@ -26,7 +26,6 @@ newADData.spac(2) = d;
 newADData.spac(3) = sqrt(d^2+s^2); % Do PG transformation
 newADData.chie = atan(d/s); % Do PG transformation
 
-
 if isempty(omega)
     omega = semiChordDim/Udim*(omegaDim - Wdim*kzDim);
 elseif isempty(omegaDim)
@@ -34,9 +33,6 @@ elseif isempty(omegaDim)
 else
     error('Cannot set both the dimensional and reduced frequency simultaneuously.');
 end
-
-% Give the frequency a small imaginary part
-omega = omega*(1+1e-5i);
 
 if strcmp(kxDim,'gust') || strcmp(kx,'gust')
     kx = omega;
@@ -46,22 +42,39 @@ elseif isempty(kxDim)
     kxDim = (kx - M^2*omega)/Beta^2/semiChordDim;
 else
     kx = kxDim*Beta^2*semiChordDim + M^2*omega;
-    omega = kx*(1+1e-5i); % Give the frequency a small imaginary part
+    omega = kx; % Give the frequency a small imaginary part
 end
 
+ky = AAData.ky;
+sigmao = AAData.sigmao;
+sigma  = AAData.sigma;
 
-ky = kyDim*semiChordDim/omega/Beta;
+kz = AAData.kz;
+if isempty(kz)
 kz = kzDim*semiChordDim/omega;
+end
 
-if isempty(AAData.kyDim)
-    sigmao = AAData.sigmao;
-    sigma= d*omega*(M/Beta)^2 + sigmao;
-    ky =  (sigma - kx/Beta^2*d)/(omega*s);
-elseif isempty(AAData.sigmao)
-    ky = AAData.kn;
+if isempty(sigma) && ~isempty(sigma0)
+    sigma  = d*omega*(M/Beta)^2 + sigmao;
+elseif isempty(sigmao) && ~isempty(sigma)
+    sigmao = sigma - d*omega*(M/Beta)^2;
+elseif isempty(sigma) && isempty(sigmao)
     sigma = kx/Beta^2*d + omega*ky*s;
     sigmao= sigma - d*omega*(M/Beta)^2;
 end    
+
+if isempty(ky) && isempty(kyDim)
+ky = (sigma-kx/Beta^2*d)/omega/s;
+elseif isempty(ky)
+ky = kyDim*semiChordDim/omega/Beta;
+end
+
+% Give the frequency a small imaginary part
+ omega = omega*(1+0e-5i);
+ kx = kx*(1+0e-5i);
+ ky = ky*(1+0e-5i);
+ sigma = sigma*(1+0e-5i);
+ sigmao = sigmao*(1+0e-5i);
 
 newAAData.sigma = sigma;
 newAAData.sigmao = sigmao;

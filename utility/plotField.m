@@ -1,6 +1,6 @@
 function plotField(h,ADData,AAData,plotData,type)
 
-nP=12;
+nP=6;
 
 Beta = ADData.Beta; % PG factor
 semiChordDim = ADData.chordDim/2;
@@ -11,6 +11,9 @@ Y = plotData.Y*semiChordDim./Beta; % Undo PG transformation.
 sDim = ADData.spacDim(1);
 dDim = ADData.spacDim(2);
 
+s = ADData.spac(1);
+d = ADData.spac(2);
+
 Yper = funPer(Y.',sDim,nP);
 Xper = funPer(X.',dDim,nP);
 
@@ -19,23 +22,23 @@ ky = AAData.ky;
 omega = AAData.omega;
 M = ADData.M;
 
-GM0 = -kx/Beta^2;
-PM0 = -omega/Beta^2;
+GM0 = -real(kx)/Beta^2;
+PM0 = -real(omega)/Beta^2;
 
-hInc = exp(1i*(-GM0.*X + omega*ky*Y.*Beta));
+hInc = exp(1i*(-GM0.*X/semiChordDim + omega*ky*Y/semiChordDim*Beta));
 
 if strcmp(type,'acoustic')
     pangle = AAData.sigma;
     hIncFin = hInc;
 elseif strcmp(type,'hvelocity')
-    pangle = AAData.sigmao5;
-    hIncFin = (-1i*GM0+1i*M^2*PM0).*hInc.*exp(1i*M^2*PM0.*X);
+    pangle = AAData.sigmao;
+    hIncFin = (-1i*GM0+1i*M^2*PM0).*hInc.*exp(1i*M^2*PM0.*X/semiChordDim);
 elseif strcmp(type,'vvelocity')
     pangle = AAData.sigmao;
-    hIncFin = (1i*omega*ky).*hInc.*exp(1i*M^2*PM0.*X);
+    hIncFin = (1i*omega*ky).*hInc.*exp(1i*M^2*PM0.*X/semiChordDim);
 elseif strcmp(type,'pressure')
     pangle = AAData.sigmao;
-    hIncFin = (-1i*GM0+1i*PM0).*hInc.*exp(1i*M^2*PM0.*X);
+    hIncFin = (-1i*GM0+1i*PM0).*hInc.*exp(1i*M^2*PM0.*X/semiChordDim);
 elseif strcmp(type,'source')
     pangle = AAData.sigma;
 elseif strcmp(type,'periodic')
@@ -63,21 +66,25 @@ if isfield(plotData,'colorbar'); colorbar; end
 
 for l = -nP:nP
     loc = ([0,2*semiChordDim]+l*dDim)+1i*l*[sDim,sDim];
-   plot(real(rot*loc),imag(rot*loc),'k','LineWidth',3) 
+   plot(real(rot*loc),imag(rot*loc),'k','LineWidth',10) 
 end
 
 axis equal
+
 xlims = 2*semiChordDim*[-2*real(rot),3*real(rot)];
 xlim(xlims);
-axis equal
+
 ax = gca;
 ylims = ax.YLim;
 drawArrow = @(x,y,varargin) quiver( x(1),y(1),x(2)-x(1),y(2)-y(1),0,'MaxHeadSize',1, varargin{:} );       
 b = omega*ky*Beta; a = (-GM0+M^2*PM0);
 l = rot.*(a+1i*b);
-drawArrow(.99*xlims(1)+[0,sqrt(1)*cos(angle(l))],.9*ylims(1) + [0,sqrt(1)*sin(angle(l))],'linewidth',3,'color','k')
-
+%drawArrow(.95*xlims(1)+[0,sqrt(.5)*cos(angle(l))],.95*ylims(2) + [0,sqrt(.5)*sin(angle(l))],'linewidth',3,'color','k')
+start = [.95*xlims(1),.95*ylims(2)];
+stop = [.95*xlims(1)+sqrt(.5)*cos(angle(l)),(.95*ylims(2) + sqrt(.5)*sin(angle(l)))];
 shading interp
+arrow(start,stop,30,'LineWidth',8);
+
 hold off
 
 xlabel('$x/2$','interpreter','LaTeX')

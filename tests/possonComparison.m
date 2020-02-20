@@ -1,6 +1,6 @@
 
 addpath(genpath('../'));
-imageFolder = '../../images/';
+%imageFolder = '../../images/';
 
 chordDim = 1;
 vaneDistDim = chordDim/cos(stagAngDim*pi/180);
