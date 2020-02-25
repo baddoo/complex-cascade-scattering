@@ -1,4 +1,4 @@
-
+addpath(genpath('../'));
 imageFolder = [];
 
 chordDim = 1;
@@ -29,31 +29,16 @@ N = alphaH/(pi*RDim^2);
 CII = -2*alphaH*KR/(1i*omega*pi*RDim^2);
 CII = [1e-4,CII];
 
-% d = dDim/semiChordDim;
-% s = sDim/semiChordDim*Beta;
-% del = sqrt(s^2+d^2); chie = atan(d/s);
-
-% x0 = [0,0,0];
-% l = @(xVar) (root(xVar,del,w,omega,chie,d,s));
-% options = optimoptions('fsolve','MaxFunctionEvaluations',1e3);
-% 
-% x = fsolve(l,x0,options);
-% lambdaM0 = x(1);
-% zetaM0 = x(2);
-% sigma = x(3);
 sigma = -3*pi/4;
 kx = 5;
 
-for l1 = [1,2,3]
-%l
-%%
 ADData=struct('spacDim', [sDim,dDim],...%Blade Spacing [h,d]
               'chordDim',chordDim,...                          %Blade length
               'c0',      c0,...                        %Speed of sound
               'M',       M,...                         %Mach number 
               'Wdim',    0,...
               'case',    2, ...                       %Case
-              'C',       CII(l1));                            %Coefficient of case                       
+              'C',       -.5i);                            %Coefficient of case                       
              
 %% Aeroacoustic Data
 AAData=struct( 'omegaDim', [],...
@@ -90,15 +75,17 @@ plotData = struct('X',X,...
 tic            
 newData=computeExponents(data,plotData);
 toc
-type = 'pressure';
+type = 'potential';
 
 h=computeField(newData,type);
 %%
 figure(5)
 
-plotField(h,newADData,newAAData,plotData,type)
-caxis(.5*[-100,100])
-latexPNG(['trans-',num2str(l1)],imageFolder,gca);
+% Returns a function 
+plotFieldTest(h,newADData,newAAData,plotData,type)
+caxis(.005*[-100,100])
+
+return
 
 %%
 LPa = permute(out.LPa,[3,2,1]);
@@ -144,7 +131,7 @@ x = -modeNum:modeNum;
 % %%matlab2tikz([imageFolder,'tr-',num2str(l1),'.tex'], 'height', '\fheight', 'width', '\fwidth','parseStrings',false,'extratikzpictureoptions','trim axis left, trim axis right');
 latexPNGNAR(['tr-',num2str(l1)],imageFolder,gca);
 %close
-end
+
 %%
 nC = 200;
 C1 = linspace(0.,100,nC/2+1); C1(1)=[];
