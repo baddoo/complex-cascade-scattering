@@ -1,4 +1,4 @@
-%addpath(genpath('../'));
+addpath(genpath('../'));
 imageFolder = [];
 
 chordDim = 1;
@@ -42,8 +42,8 @@ ADData=struct('spacDim', [sDim,dDim],...%Blade Spacing [h,d]
              
 %% Aeroacoustic Data
 AAData=struct( 'omegaDim', [],...
-               'omega',    5*(1 + 1e-7i),...                      %Tangential Frequency
-               'kx',       5*(1 + 1e-7i),...
+               'omega',    omega*(1 + 1e-7i),...                      %Tangential Frequency
+               'kx',       kx*(1 + 1e-7i),...
                'kxDim',    [],...
                'ky',       [],...                       %Normal frequency
                'kyDim',    [],...
@@ -55,8 +55,8 @@ AAData=struct( 'omegaDim', [],...
 %% Information about Modes            
 Modes=struct('comb',[1,1,1,1],...
              'trunc',100,...                     %Truncation of kernel modes
-             'dmodes',35,...                      %Number of duct mode
-             'amodes',35);
+             'dmodes',15,...                      %Number of duct mode
+             'amodes',15);
 
 [newADData,newAAData] = prepareData(ADData,AAData);         
 out = computeModes(newADData,newAAData,Modes);
@@ -66,24 +66,19 @@ xSurf = (1+sin(pi/2*linspace(-1,1)))/2;
 
 data=computeCoefficients(newADData,newAAData,out);
 
-Z = linspace(-2,2+0*newADData.spac(2),100) + linspace(0,newADData.spac(3),100).'*1i*exp(-1i*newADData.chie);
-%Z = linspace(0,newADData.spac(2))+1i*linspace(0,newADData.spac(1)-.01,500)';
+Z = linspace(-4,6,100) + linspace(0,newADData.spac(3),100).'*1i*exp(-1i*newADData.chie);
 X = real(Z); Y = imag(Z);
 
 plotData = struct('X',X,...
                   'Y',Y,...
                   'axisLimits',[-3,3,-2,2]);              
 tic            
-newData=computeExponents(data,plotData);
+%newData=computeExponents(data,plotData);
 toc
 type = 'potential';
 
 % Returns a function handle corresponding to the parameters and type.
-h = @(zVar) evaluateField(zVar,newData,type);
-
-pcolor(X,Y,real(h(Z))); shading interp
-caxis(.1*[-1,1])
-return
+h = evaluateField(newData,type);
 %%
 figure(5)
 

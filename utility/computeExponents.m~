@@ -92,7 +92,7 @@ newdata.A1aTM.vvelocity = -bsxfun(@times,1./(cos(d*TMd+sigma)-cos(zeta(TMd).*s))
 
 zetaGM0=mysqrt(omega.*w,GM0);
 psiZetaGM0=bsxfun(@times,Y,zetaGM0);
-psiMinSZetaGM0=bsxfun(@times,Y-s,zetaGM0);
+psiMinhZetaGM0=bsxfun(@times,Y-s,zetaGM0);
 
 A1bGM0 = bsxfun(@times,exp(1i*(d*GM0+sigma))./(cos(d*GM0+sigma)-cos(s*zetaGM0)),cos(psiZetaGM0).*exp(-1i*xGM0));
 newdata.A1bGM0.potential = A1bGM0;
@@ -100,11 +100,11 @@ newdata.A1bGM0.pressure = A1bGM0.*(GM0-PM0).*pressureFactor;
 newdata.A1bGM0.hvelocity = A1bGM0.*(-1i*GM0).*velocityFactor;
 newdata.A1bGM0.vvelocity = bsxfun(@times,exp(1i*(d*GM0+sigma))./(cos(d*GM0+sigma)-cos(s*zetaGM0)).*zetaGM0,-sin(psiZetaGM0).*exp(-1i*xGM0)).*velocityFactor;
  
-A1aGM0 = bsxfun(@times,1./(-cos(d*GM0+sigma)+cos(s*zetaGM0)),cos(psiMinSZetaGM0).*exp(-1i*xGM0));
+A1aGM0 = bsxfun(@times,1./(-cos(d*GM0+sigma)+cos(s*zetaGM0)),cos(psiMinhZetaGM0).*exp(-1i*xGM0));
 newdata.A1aGM0.potential = A1aGM0;
 newdata.A1aGM0.pressure = A1aGM0.*(GM0-PM0).*pressureFactor;
 newdata.A1aGM0.hvelocity = A1aGM0.*(-1i*GM0).*velocityFactor;
-newdata.A1aGM0.vvelocity = bsxfun(@times,-1./(cos(d*GM0+sigma)-cos(s*zetaGM0)).*zetaGM0,-sin(psiMinSZetaGM0).*exp(-1i*xGM0)).*velocityFactor;
+newdata.A1aGM0.vvelocity = bsxfun(@times,-1./(cos(d*GM0+sigma)-cos(s*zetaGM0)).*zetaGM0,-sin(psiMinhZetaGM0).*exp(-1i*xGM0)).*velocityFactor;
 
 zetaPM0=mysqrt(omega.*w,PM0);
 yZetaPM0=bsxfun(@times,Y,zetaPM0);

@@ -1,0 +1,14 @@
+function h = evaluateField(Z,data)
+
+% Partition Z into relevant domains
+upZ(repmat(X>=Y*d/s,m))=0; % Z in the upstream region
+upIntZ(repmat(X<Y*d/s | X>=d,m))=0; % Z in the upper inter-blade region
+intZ(repmat(X<d | X>=2,m))=0; % Z in the inter-blade region
+dwnIntZ(repmat(X>=2+Y*d/s | X<2,m))=0; % Z in the lower inter-blade region
+dwnZ(repmat(X-2<Y*d/s,m))=0; % Z in the downstream
+
+upField
+
+h =  upstream + upperTriangle + rectangle + lowerTriangle + downstream; 
+
+end

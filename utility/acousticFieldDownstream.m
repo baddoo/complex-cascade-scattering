@@ -23,7 +23,7 @@ data.comb=[0,1,0,1];
 Dfin= pi*1i*bsxfun(@times,permute(D(LM1,data),[3,2,1,4,5]),(A1aResM + A1bResM));
 Dterms = sum(Dfin,3);
 
-gModeFun = A1aPM0+A1bPM0;%A1aGM(:,:,ceil(end/2),:,:)+A1bGM(:,:,ceil(end/2),:,:);
+gModeFun = A1aPM0 + A1bPM0;
 
 AsumG = -sum((data.D1.A+data.D1.C)./(1i*(TMd-PM0)).*KMTM./KMPM0.*exp(-2i*(TMd-PM0)),3);
 
