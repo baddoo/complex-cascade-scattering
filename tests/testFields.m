@@ -3,8 +3,8 @@ addpath(genpath('../'));
 imageFolder = '../../images/';
 
 chordDim = 1;
-vaneDistDim = chordDim/cos(stagAngDim*pi/180);
 stagAngDim = 40;
+vaneDistDim = chordDim/cos(stagAngDim*pi/180);
 
 dDim = vaneDistDim*sin(stagAngDim*pi/180);
 sDim = vaneDistDim*cos(stagAngDim*pi/180);
@@ -17,11 +17,11 @@ ADData=struct('spacDim',     [sDim,dDim],... %Dimensional blade spacing
               'M',           0.2,...           %Mach number 
               'Wdim',        0,...           %Spanwise background velocity
               'case',        2, ...              %Case
-              'C',           -.2623-0.0244i);                 %Coefficient of case                       
+              'C',           1);%-.2623-0.0244i);                 %Coefficient of case                       
              
 %% Aeroacoustic Data
 AAData=struct( 'omegaDim',    [],...                 %Time Frequency
-               'omega',       50*(1+1e-3i),...                 %Time Frequency
+               'omega',       1,...                 %Time Frequency
                'kxDim',       [],...                   %Tangential frequency
                'kx',          20,...                   %Tangential frequency
                'ky',          [],...
@@ -37,8 +37,10 @@ Modes=struct('comb',[1,1,1,1],...
              'dmodes',35,...                      %Number of duct mode
              'amodes',35);
 
-[newADData,newAAData] = prepareData(ADData,AAData);         
+[newADData,newAAData] = prepareData(ADData,AAData);      
+tic
 out = computeModes(newADData,newAAData,Modes);
+toc
 %%
 xSurf = chordDim*(1+sin(pi/2*linspace(-1,1)))/2; %xSurf(1) = []; xSurf(end) = [];
 
@@ -49,11 +51,11 @@ plotData = struct('X',X,...
                   'Y',Y,...
                   'axisLimits',chordDim*[-3,3,-2,2]);              
 tic            
-newData=computeExponents(data,plotData);
+%newData=computeExponents(data,plotData);
 toc
 type = 'pressure';
 
-h=computeField(newData,type);
+h=computeField(data,type);
 %%
 figure(1)
 

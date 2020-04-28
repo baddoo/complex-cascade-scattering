@@ -54,7 +54,7 @@ if isempty(kz)
 kz = kzDim*semiChordDim/omega;
 end
 
-if isempty(sigma) && ~isempty(sigma0)
+if isempty(sigma) && ~isempty(sigmao)
     sigma  = d*omega*(M/Beta)^2 + sigmao;
 elseif isempty(sigmao) && ~isempty(sigma)
     sigmao = sigma - d*omega*(M/Beta)^2;

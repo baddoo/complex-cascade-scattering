@@ -28,8 +28,8 @@ xLM3 = bsxfun(@times,X,LMa);         newdata.xLM3 = xLM3;
 xLP3 = bsxfun(@times,X,LPa);         newdata.xLP3 = xLP3;
 yZM3 = bsxfun(@times,Y,ZMa);         newdata.yZM3 = yZM3;
 yZP3 = bsxfun(@times,Y,ZPa);         newdata.yZP3 = yZP3;
-yMinSZP3 = bsxfun(@times,Y-s,ZPa);  newdata.yMinSZP3 = yMinSZP3;
-yMinSZM3 = bsxfun(@times,Y-s,ZMa);  newdata.yMinSZM3 = yMinSZM3;   
+yMinSZP3 = bsxfun(@times,Y-s,ZPa);   newdata.yMinSZP3 = yMinSZP3;
+yMinSZM3 = bsxfun(@times,Y-s,ZMa);   newdata.yMinSZM3 = yMinSZM3;   
 
 xTM3  = bsxfun(@times,X,TMd);
 xTP3  = bsxfun(@times,X,TPd);
