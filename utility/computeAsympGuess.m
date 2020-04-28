@@ -8,7 +8,7 @@ mu = ADData.mu;
 s = ADData.spac(1); d = ADData.spac(2);
 del = sqrt(s^2+d^2);
 chie = ADData.chie;
-sigma = AAData.sigma;
+Sigma = AAData.Sigma;
 n= 1:Modes.trunc;
 expMC = exp(-1i*chie); expPC = exp(1i*chie);
 
@@ -18,36 +18,36 @@ switch ADData.case
     case 1
     a0q1  = 2i*pi*expMC/del;
     a1q1  =      -expMC/del;
-    a2q1  = (1i*(pi/2 + chie - sigma) - log(2*pi/mu(1)/del))*expMC./del;
+    a2q1  = (1i*(pi/2 + chie - Sigma) - log(2*pi/mu(1)/del))*expMC./del;
     
     a0q2 = 2i*pi*expPC/del;
     a1q2 =       expPC/del;
-    a2q2 = (1i*(pi/2 + chie + sigma) + log(2*pi/mu(1)/del))*expPC./del;
+    a2q2 = (1i*(pi/2 + chie + Sigma) + log(2*pi/mu(1)/del))*expPC./del;
     
-    a2q3 = (-1i*(pi/2 + chie + sigma) + log(2*pi/mu(1)/del))*expMC./del;
-    a2q4 = (-1i*(pi/2 + chie - sigma) - log(2*pi/mu(1)/del))*expPC./del;
+    a2q3 = (-1i*(pi/2 + chie + Sigma) + log(2*pi/mu(1)/del))*expMC./del;
+    a2q4 = (-1i*(pi/2 + chie - Sigma) - log(2*pi/mu(1)/del))*expPC./del;
     
     case 2
 
     a0q1  = 2i*pi*expMC/del;
     a1q1  = 0;
-    a2q1 = (-1i*sigma - log(1-1i/(mu(2))))*expMC./del;
+    a2q1 = (-1i*Sigma - log(1-1i/(mu(2))))*expMC./del;
 
     a0q2 = 2i*pi*expPC/del;
     a1q2 =  0;
-    a2q2 = ( 1i*sigma + log(1+1i/(mu(2))))*expPC./del;
+    a2q2 = ( 1i*Sigma + log(1+1i/(mu(2))))*expPC./del;
     
-    a2q3 = (-1i*sigma + log(1+1i/(mu(2))))*expMC./del;
-    a2q4 = ( 1i*sigma - log(1-1i/(mu(2))))*expPC./del;
+    a2q3 = (-1i*Sigma + log(1+1i/(mu(2))))*expMC./del;
+    a2q4 = ( 1i*Sigma - log(1-1i/(mu(2))))*expPC./del;
 
     case 3
     a0q1  = 2i*pi*expMC/del;
     a1q1  = 0;
-    a2q1  = -sigma*1i*expMC./del;
+    a2q1  = -Sigma*1i*expMC./del;
 
     a0q2 = 2i*pi*expPC/del;
     a1q2 =  0;
-    a2q2 = sigma*1i*expPC./del;
+    a2q2 = Sigma*1i*expPC./del;
     
     a2q3 = conj(a2q2);
     a2q4 = conj(a2q1);

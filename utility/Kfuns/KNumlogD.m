@@ -12,7 +12,7 @@ omega = AAData.omega;
 w = AAData.w;
 he = ADData.spac(1);
 d = ADData.spac(2);
-sigma = AAData.sigma;
+Sigma = AAData.Sigma;
 mu = ADData.mu; 
 
 zeta = @(x) mysqrt(omega*w,x);
@@ -70,7 +70,7 @@ expPH1 = exp(1i*he*zg1);
 expPD2 = exp(1i*d*g2);
 expPD4 = exp(1i*d*g4);
 
-expPS = exp(1i*sigma);
+expPS = exp(1i*Sigma);
 
 % Define regularisations of denominator
 den1 = expPH1.^2+1 - expPHPD1*expPS - expPHND1/expPS;

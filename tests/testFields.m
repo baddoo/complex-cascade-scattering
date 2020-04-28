@@ -3,7 +3,7 @@ addpath(genpath('../'));
 imageFolder = '../../images/';
 
 chordDim = 1;
-stagAngDim = 40;
+stagAngDim = 20;
 vaneDistDim = chordDim/cos(stagAngDim*pi/180);
 
 dDim = vaneDistDim*sin(stagAngDim*pi/180);
@@ -21,15 +21,15 @@ ADData=struct('spacDim',     [sDim,dDim],... %Dimensional blade spacing
              
 %% Aeroacoustic Data
 AAData=struct( 'omegaDim',    [],...                 %Time Frequency
-               'omega',       1,...                 %Time Frequency
+               'omega',       30,...                 %Time Frequency
                'kxDim',       [],...                   %Tangential frequency
                'kx',          20,...                   %Tangential frequency
                'ky',          [],...
                'kyDim',       [],...                       %Normal frequency
                'kzDim',       [],...                       %Spanwise frequency
                'kz',          0,...
-               'sigmao',      3*pi/4,...                  %Interblade phase angle in (x,y)-space
-               'sigma',       [],...
+               'Sigmao',      3*pi/4,...                  %Interblade phase angle in (x,y)-space
+               'Sigma',       [],...
                'Amp',         [nan,1,nan]); %Amplitude of gust in form [At,An,A3]
 %% Information about Modes            
 Modes=struct('comb',[1,1,1,1],...
@@ -45,7 +45,7 @@ toc
 xSurf = chordDim*(1+sin(pi/2*linspace(-1,1)))/2; %xSurf(1) = []; xSurf(end) = [];
 
 data=computeCoefficients(newADData,newAAData,out);
-Z = linspace(-2,3,200) + linspace(0,newADData.spac(3)).'*1i*exp(-1i*newADData.chie);
+Z = linspace(-4,6,200) + linspace(0,newADData.spac(3)).'*1i*exp(-1i*newADData.chie);
 X = real(Z); Y = imag(Z);
 plotData = struct('X',X,...
                   'Y',Y,...
@@ -53,11 +53,11 @@ plotData = struct('X',X,...
 tic            
 %newData=computeExponents(data,plotData);
 toc
-type = 'pressure';
+type = 'acoustic';
 
-h=computeField(data,type);
+phi = computeField(data,type);
 %%
 figure(1)
 
-plotFieldScattered(h,newADData,newAAData,plotData,type)
-caxis(1*[-5,5])
+plotFieldScattered(phi,newADData,newAAData,plotData,type)
+caxis(.001*[-5,5])

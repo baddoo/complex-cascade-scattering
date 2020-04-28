@@ -1,4 +1,4 @@
-function plotFieldScattered(h,ADData,AAData,plotData,type)
+function plotFieldScattered(phi,ADData,AAData,plotData,type)
 
 nP=12;
 
@@ -23,20 +23,20 @@ GM0 = -kx/Beta^2;
 PM0 = -omega/Beta^2;
 
 if strcmp(type,'acoustic')
-    pangle = AAData.sigma;
+    pangle = AAData.Sigma;
 elseif strcmp(type,'hvelocity')
-    pangle = AAData.sigmao;
+    pangle = AAData.Sigmao;
 elseif strcmp(type,'vvelocity')
-    pangle = AAData.sigmao;
+    pangle = AAData.Sigmao;
 elseif strcmp(type,'pressure')
-    pangle = AAData.sigmao;
+    pangle = AAData.Sigmao;
 elseif strcmp(type,'source')
-    pangle = AAData.sigma;
+    pangle = AAData.Sigma;
 elseif strcmp(type,'periodic')
     pangle = 0;
 end
 
-h2 = funPerMult(h.',exp(1i*pangle),nP);
+h2 = funPerMult(phi(plotData.X+1i*plotData.Y).',exp(1i*pangle),nP);
 
 rot=exp(1i*atan(dDim/sDim));
 newcoord = (Xper+1i*Yper)*rot;

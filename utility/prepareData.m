@@ -46,25 +46,25 @@ else
 end
 
 ky = AAData.ky;
-sigmao = AAData.sigmao;
-sigma  = AAData.sigma;
+Sigmao = AAData.Sigmao;
+Sigma  = AAData.Sigma;
 
 kz = AAData.kz;
 if isempty(kz)
 kz = kzDim*semiChordDim/omega;
 end
 
-if isempty(sigma) && ~isempty(sigmao)
-    sigma  = d*omega*(M/Beta)^2 + sigmao;
-elseif isempty(sigmao) && ~isempty(sigma)
-    sigmao = sigma - d*omega*(M/Beta)^2;
-elseif isempty(sigma) && isempty(sigmao)
-    sigma = kx/Beta^2*d + omega*ky*s;
-    sigmao= sigma - d*omega*(M/Beta)^2;
+if isempty(Sigma) && ~isempty(Sigmao)
+    Sigma  = d*omega*(M/Beta)^2 + Sigmao;
+elseif isempty(Sigmao) && ~isempty(Sigma)
+    Sigmao = Sigma - d*omega*(M/Beta)^2;
+elseif isempty(Sigma) && isempty(Sigmao)
+    Sigma = kx/Beta^2*d + omega*ky*s;
+    Sigmao= Sigma - d*omega*(M/Beta)^2;
 end    
 
 if isempty(ky) && isempty(kyDim)
-ky = (sigma-kx/Beta^2*d)/omega/s;
+ky = (Sigma-kx/Beta^2*d)/omega/s;
 elseif isempty(ky)
 ky = kyDim*semiChordDim/omega/Beta;
 end
@@ -73,11 +73,11 @@ end
  omega = omega*(1+0e-5i);
  kx = kx*(1+0e-5i);
  ky = ky*(1+0e-5i);
- sigma = sigma*(1+0e-5i);
- sigmao = sigmao*(1+0e-5i);
+ Sigma = Sigma*(1+0e-5i);
+ Sigmao = Sigmao*(1+0e-5i);
 
-newAAData.sigma = sigma;
-newAAData.sigmao = sigmao;
+newAAData.Sigma = Sigma;
+newAAData.Sigmao = Sigmao;
 newAAData.omega = omega;
 newAAData.omegaDim = omegaDim;
 newAAData.kxDim = kxDim;

@@ -2,7 +2,7 @@ function output = computeModes(ADData,AAData,Modes)
 
 %% Get data from structures
 s=ADData.spac(1); d=ADData.spac(2); del = ADData.spac(3);
-trunc=Modes.trunc; w=AAData.w; sigma=AAData.sigma;
+trunc=Modes.trunc; w=AAData.w; Sigma=AAData.Sigma;
 kx=AAData.kx; omega = AAData.omega; chie = ADData.chie;
 Beta = ADData.Beta; amodes=Modes.amodes;
 %% Define duct mods
@@ -30,7 +30,7 @@ Modes.trunc = trunc;
 
 %% Define acoustic modes
 aTrunc = permute(-trunc:trunc,[1,3,2]);
-f=(bsxfun(@minus,sigma,2*pi*aTrunc))/del;
+f=(bsxfun(@minus,Sigma,2*pi*aTrunc))/del;
 SQRT=mysqrt(w*omega,f); output.SQRT=SQRT;
 LM=-f*sin(chie)-cos(chie)*SQRT;
 LP=-f*sin(chie)+cos(chie)*SQRT;
@@ -41,8 +41,8 @@ dmodes = Modes.dmodes;
 TMd = TM(:,:,(1:dmodes),:,:);
 TPd = TP(:,:,(1:dmodes),:,:);
 
-ZM= -(sigma+d*LM-2*pi*permute(-trunc:trunc,[1,3,2,4,5]))/s;
-ZP=  (sigma+d*LP-2*pi*permute(-trunc:trunc,[1,3,2,4,5]))/s;
+ZM= -(Sigma+d*LM-2*pi*permute(-trunc:trunc,[1,3,2,4,5]))/s;
+ZP=  (Sigma+d*LP-2*pi*permute(-trunc:trunc,[1,3,2,4,5]))/s;
 
 LMa= LM(:,:,(ceil(end/2)-amodes):(ceil(end/2)+amodes),:,:); 
 LPa= LP(:,:,(ceil(end/2)-amodes):(ceil(end/2)+amodes),:,:); 
@@ -142,7 +142,7 @@ output.TP =     TP;
 output.TM=      TM;
 output.spac=    ADData.spac;
 output.Beta=    ADData.Beta;
-output.sigma=   AAData.sigma;
+output.Sigma=   AAData.Sigma;
 output.w =      AAData.w;
 output.SQRTa=   SQRTa;
 
