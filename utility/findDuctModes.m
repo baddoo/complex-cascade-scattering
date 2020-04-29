@@ -17,8 +17,10 @@ allRootsUnique = [allRootsUnique;knownRootsInit(~loc).'];
 
 % Separate into components in the upper and lower half planes according to
 % imaginary parts of omega and kx.
-TP = sort(allRootsUnique(imag(allRootsUnique)>=-0*min(imag([AAData.kx,AAData.omega]/ADData.Beta.^2))));
-TM = sort(allRootsUnique(imag(allRootsUnique)< -0*min(imag([AAData.kx,AAData.omega]/ADData.Beta.^2))));
+%TP = sort(allRootsUnique(imag(allRootsUnique)>= max(imag([AAData.kx,AAData.omega]/ADData.Beta.^2))));
+%TM = sort(allRootsUnique(imag(allRootsUnique)<  max(imag([AAData.kx,AAData.omega]/ADData.Beta.^2))));
+TP = sort(allRootsUnique(imag(allRootsUnique)>= -imag(AAData.kx/ADData.Beta.^2)));
+TM = sort(allRootsUnique(imag(allRootsUnique)<  -imag(AAData.kx/ADData.Beta.^2)));
 
 % Reshape into third dimension
 TP3 = permute(TP,[3,2,1]);

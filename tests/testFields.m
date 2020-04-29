@@ -17,13 +17,15 @@ ADData=struct('spacDim',     [sDim,dDim],... %Dimensional blade spacing
               'M',           0.2,...           %Mach number 
               'Wdim',        0,...           %Spanwise background velocity
               'case',        2, ...              %Case
-              'C',           1);%-.2623-0.0244i);                 %Coefficient of case                       
-             
+              'C',           -1);%-.2623-0.0244i);                 %Coefficient of case                       
+             % Issue is when C has a negative real part... Roots are found
+             % fine, but associating which ones are in the upper or lower
+             % half plane is difficult.
 %% Aeroacoustic Data
 AAData=struct( 'omegaDim',    [],...                 %Time Frequency
-               'omega',       30,...                 %Time Frequency
+               'omega',       40*(1+1e-3i),...                 %Time Frequency
                'kxDim',       [],...                   %Tangential frequency
-               'kx',          20,...                   %Tangential frequency
+               'kx',          20*(1-0e-2i),...                   %Tangential frequency
                'ky',          [],...
                'kyDim',       [],...                       %Normal frequency
                'kzDim',       [],...                       %Spanwise frequency
@@ -53,11 +55,11 @@ plotData = struct('X',X,...
 tic            
 %newData=computeExponents(data,plotData);
 toc
-type = 'acoustic';
+type = 'pressure';
 
 phi = computeField(data,type);
 %%
-figure(1)
+figure(2)
 
 plotFieldScattered(phi,newADData,newAAData,plotData,type)
-caxis(.001*[-5,5])
+caxis(.500*[-5,5])

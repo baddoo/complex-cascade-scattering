@@ -22,7 +22,7 @@ M = ADData.M;
 GM0 = -kx/Beta^2;
 PM0 = -omega/Beta^2;
 
-if strcmp(type,'acoustic')
+if strcmp(type,'potential')
     pangle = AAData.Sigma;
 elseif strcmp(type,'hvelocity')
     pangle = AAData.Sigmao;

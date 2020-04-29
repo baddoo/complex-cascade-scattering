@@ -69,12 +69,12 @@ elseif isempty(ky)
 ky = kyDim*semiChordDim/omega/Beta;
 end
 
-% Give the frequency a small imaginary part
- omega = omega*(1+0e-5i);
- kx = kx*(1+0e-5i);
- ky = ky*(1+0e-5i);
- Sigma = Sigma*(1+0e-5i);
- Sigmao = Sigmao*(1+0e-5i);
+% % Give the frequency a small imaginary part
+%  omega = omega;
+%  kx = kx;
+%  ky = ky ;
+%  Sigma =Sigma*(1+0e-5i);
+%  Sigmao = Sigmao*(1+0e-5i);
 
 newAAData.Sigma = Sigma;
 newAAData.Sigmao = Sigmao;

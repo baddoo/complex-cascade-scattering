@@ -20,7 +20,7 @@ zg = zeta(gamma);
 
 if mu == zeros(size(mu))
 % In the special case where mu vanishes, we may write the logarithmic
-% derivative in the simple, well conditioned form: 
+% derivative in the simple, well-conditioned form: 
 KLD = -gamma.*(1+zg*he.*cot(he*zg))./zg.^2;   
     
 else
@@ -107,9 +107,4 @@ KLD(quad4) = fullDNum4./fullNum4;
 end
 
 end
-
-% Elapsed time is 1.762890 seconds.
-% Elapsed time is 1.095508 seconds.
-% Elapsed time is 1.189526 seconds.
-
 

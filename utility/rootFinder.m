@@ -35,7 +35,8 @@ end
 
 err = inf;
 m = 0;
-while err~=0
+while err>0
+
 Rvec = [R0,0];    
 NR = round(-1i/nInt0*sum(intFun(tInt0,R0,0,newKR),2));  
 aNR = NR;
@@ -87,8 +88,9 @@ aNR(zerLoc) = [];
 NR(zerLoc) = [];
 Rvec(zerLoc) = [];
 
+if numel(Rvec)>1
 % Calculate Newton sums
-mat = repmat(1:max(aNR),[numel(Rvec)-1,1]);  % remove one from R because of zero radiues
+mat = repmat(1:max(aNR),[numel(Rvec)-1,1]);  % remove one from R because of zero radius
 mat34 = permute(mat,[3,4,1,2]);
 R3 = permute(Rvec,[1,3,2]);
 
@@ -103,11 +105,14 @@ initRoots(initRoots==0)=[];
 % Hone in on roots
 refinedRoots = newtonKRoots(initRoots,f,logD,tol,newKR);
 
-% The total number of roots in the region is
+% The total number of roots remaining in the region is
 err = NR(1)-numel(myUnique(refinedRoots,tol));
-NR = err;
 newKR = [newKR(:);myUnique(refinedRoots(:),tol)];
+else
 
+err = 0;
+
+end
 % Double the number of quadrature points in the next integration.
 nInt = 2*nInt;
 m = m + 1;

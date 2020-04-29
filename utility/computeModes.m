@@ -6,28 +6,29 @@ trunc=Modes.trunc; w=AAData.w; Sigma=AAData.Sigma;
 kx=AAData.kx; omega = AAData.omega; chie = ADData.chie;
 Beta = ADData.Beta; amodes=Modes.amodes;
 %% Define duct mods
-R0 = 20;
+R0 = 5;
 err = inf;
 counter = 0;
 
-while err>1e-1
+while err>1e-2
 chi = 0;
 if cos(chi)<0; error('The ellipse does not have the right parameters'); end
 [TP,TM,asymP] = findDuctModes(R0,chi,ADData,AAData,Modes);
 
-% Remove the largest roots so we have as many duct modes as acoustic modes
-if numel(TP)>2*trunc+1
-TP = mink(TP,2*trunc+1,'ComparisonMethod','abs');
-else
-trunc = (min(numel(TP),numel(TM))-1)/2;
-end
-if numel(TM)>2*trunc+1
-TM = mink(TM,2*trunc+1,'ComparisonMethod','abs');
-else
-trunc = (min(numel(TP),numel(TM))-1)/2;
-end
+% % Remove the largest roots so we have as many duct modes as acoustic modes
+% if numel(TP)>2*trunc+1
+% TP = mink(TP,2*trunc+1,'ComparisonMethod','abs');
+% else
+% trunc = (min(numel(TP),numel(TM))-1)/2;
+% end
+% if numel(TM)>2*trunc+1
+% TM = mink(TM,2*trunc+1,'ComparisonMethod','abs');
+% else
+% trunc = (min(numel(TP),numel(TM))-1)/2;
+% end
 Modes.trunc = trunc;
-
+regK(TP,ADData,AAData);
+regK(TM,ADData,AAData);
 %% Define acoustic modes
 aTrunc = permute(-trunc:trunc,[1,3,2]);
 f=(bsxfun(@minus,Sigma,2*pi*aTrunc))/del;
@@ -57,9 +58,9 @@ Kargs.TM=TM; Kargs.LM=LM; Kargs.TP=TP; Kargs.LP=LP;
 % Check factorisation. If the error is too small, then go back and increase
 % the radius of integration by 50%.
 
-largeVal = 2*R0*exp(1i*linspace(-pi,pi,20));
+largeVal = sqrt(R0)*exp(1i*linspace(-pi,pi,20));
 %err = norm(Kminus(largeVal,Kargs).*Kplus(largeVal,Kargs)-regK(largeVal,ADData,AAData),'inf')
-err = norm(Kminus(largeVal,Kargs).*Kplus(largeVal,Kargs)./regK(largeVal,ADData,AAData)-1,'inf');
+err = norm(Kminus(largeVal,Kargs).*Kplus(largeVal,Kargs) - regK(largeVal,ADData,AAData),'inf');
 
 counter = counter + 1;
 
@@ -81,29 +82,36 @@ PM0 = -(omega)/Beta^2;
 output.GM0 = GM0;
 output.PM0 = PM0;
 
-pl=0;
+pl=1;
 if pl == 1
     figure(1)
 
-nx = 200; ny = 200;
-xp = linspace(-15,15,nx);
+% Define grid for phase plot
+nx = 100; ny = 100;
+xp = linspace(-25,15,nx);
 yp = -linspace(-15,15,ny);
 [X,Y]=meshgrid(xp,yp);
 Z = X + 1i*Y;
-PhasePlot(Z,regK(Z,ADData,AAData)-(Kplus(Z,Kargs).*Kminus(Z,Kargs)),'d');
+% Plot phase plot of error. Should be all red, which means that the error
+% is zero.
+Kerr = regK(Z,ADData,AAData)-(Kplus(Z,Kargs).*Kminus(Z,Kargs));
+%PhasePlot(Z,Kerr,'d');
+pcolor(real(Z),imag(Z),abs(Kerr));
+shading interp
 
 hold on
-plot(permute(TM,[3,2,1]),'gx')
-plot(permute(TP,[3,2,1]),'kx')
-plot(asymP,'go')
+plot(permute(TM,[3,2,1]),'bx') % Roots in LHP in blue
+plot(permute(TP,[3,2,1]),'rx') % Roots in UHP in red
+plot(asymP,'go') % Asymptotic guess in green
 
 hold off
 
 axis([xp(1), xp(end), yp(end), yp(1)])
 axis on
+axis equal
 shading interp
 colorbar
-
+drawnow
 end
 
 KMGM0=Kminus(GM0,Kargs);
