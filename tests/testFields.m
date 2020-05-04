@@ -17,20 +17,20 @@ ADData=struct('spacDim',     [sDim,dDim],... %Dimensional blade spacing
               'M',           0.2,...           %Mach number 
               'Wdim',        0,...           %Spanwise background velocity
               'case',        2, ...              %Case
-              'C',           -1);%-.2623-0.0244i);                 %Coefficient of case                       
+              'C',           (-.2623-0.0244i));                 %Coefficient of case                       
              % Issue is when C has a negative real part... Roots are found
              % fine, but associating which ones are in the upper or lower
              % half plane is difficult.
 %% Aeroacoustic Data
 AAData=struct( 'omegaDim',    [],...                 %Time Frequency
-               'omega',       40*(1+1e-3i),...                 %Time Frequency
+               'omega',       20 + 1e-3i,...                 %Time Frequency
                'kxDim',       [],...                   %Tangential frequency
-               'kx',          20*(1-0e-2i),...                   %Tangential frequency
+               'kx',          15,...                   %Tangential frequency
                'ky',          [],...
                'kyDim',       [],...                       %Normal frequency
                'kzDim',       [],...                       %Spanwise frequency
                'kz',          0,...
-               'Sigmao',      3*pi/4,...                  %Interblade phase angle in (x,y)-space
+               'Sigmao',      0*pi/4,...                  %Interblade phase angle in (x,y)-space
                'Sigma',       [],...
                'Amp',         [nan,1,nan]); %Amplitude of gust in form [At,An,A3]
 %% Information about Modes            
@@ -55,11 +55,11 @@ plotData = struct('X',X,...
 tic            
 %newData=computeExponents(data,plotData);
 toc
-type = 'pressure';
+type = 'vvelocity';
 
 phi = computeField(data,type);
-%%
-figure(2)
+
+figure(3)
 
 plotFieldScattered(phi,newADData,newAAData,plotData,type)
-caxis(.500*[-5,5])
+caxis(.5*[-5,5])

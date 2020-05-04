@@ -70,6 +70,9 @@ if counter>10; error("The roots couldn't all be found"); end
 
 end
 
+max(max(abs(K([TMd(:);TPd(:)],ADData,AAData))))
+max(max(abs(1./K([LMa(:);LPa(:)],ADData,AAData))))
+
 KMTM=permute(Kminus(permute(TMd,[3,2,1,4,5]),Kargs),[3,2,1,4,5]);
 KPTP=permute(Kplus(permute(TPd,[3,2,1,4,5]),Kargs),[3,2,1,4,5]); 
 
@@ -97,18 +100,23 @@ Z = X + 1i*Y;
 Kerr = regK(Z,ADData,AAData)-(Kplus(Z,Kargs).*Kminus(Z,Kargs));
 %PhasePlot(Z,Kerr,'d');
 pcolor(real(Z),imag(Z),abs(Kerr));
+colormap gray
 shading interp
 
 hold on
-plot(permute(TM,[3,2,1]),'bx') % Roots in LHP in blue
-plot(permute(TP,[3,2,1]),'rx') % Roots in UHP in red
-plot(asymP,'go') % Asymptotic guess in green
+plot(TM(:),'bx') % Roots in LHP in blue
+plot(TP(:),'rx') % Roots in UHP in red
+plot(LPa(:),'ro')
+plot(LMa(:),'bo')
+%plot(asymP,'go') % Asymptotic guess in green
 
 hold off
 
 axis([xp(1), xp(end), yp(end), yp(1)])
+axis([-10,10,-10,10])
+caxis([-100,-90])
 axis on
-axis equal
+%axis equal
 shading interp
 colorbar
 drawnow

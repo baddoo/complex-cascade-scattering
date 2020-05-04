@@ -57,7 +57,8 @@ for ifreq = 1:nfreq
 invmat(:,:,ifreq)=inv(eye(dmodes)-F1(:,:,ifreq)*L1(:,:,ifreq)); %this matrix is inv*F
 end
 coefdata.invmat=invmat;
-
+det(invmat)
+cond(invmat)
 data.D1=computeD1Coefficients(coefdata);
 
 data.kx=kx;
