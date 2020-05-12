@@ -14,6 +14,6 @@ zg = zeta(gamma);
 regJ = zg/1i.*(exp(2i*s*zg)-1)./...
         (4*pi*(exp(2i*s*zg)+1-exp(1i*(s*zg + d*gamma + Sigma))-exp(-1i*(-s*zg + d*gamma+Sigma))));     
 
-K = regJ + (mu(1) - 1i*gamma*mu(2) - gamma.^2*mu(3))/(4*pi);    
+K = regJ - (mu(1) - 1i*gamma*mu(2) - gamma.^2*mu(3))/(4*pi);    
 
 end

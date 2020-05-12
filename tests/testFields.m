@@ -30,7 +30,7 @@ AAData=struct( 'omegaDim',    [],...                 %Time Frequency
                'kyDim',       [],...                       %Normal frequency
                'kzDim',       [],...                       %Spanwise frequency
                'kz',          0,...
-               'Sigmao',      0*pi/4,...                  %Interblade phase angle in (x,y)-space
+               'Sigmao',      3*pi/4,...                  %Interblade phase angle in (x,y)-space
                'Sigma',       [],...
                'Amp',         [nan,1,nan]); %Amplitude of gust in form [At,An,A3]
 %% Information about Modes            
@@ -44,8 +44,6 @@ tic
 out = computeModes(newADData,newAAData,Modes);
 toc
 %%
-xSurf = chordDim*(1+sin(pi/2*linspace(-1,1)))/2; %xSurf(1) = []; xSurf(end) = [];
-
 data=computeCoefficients(newADData,newAAData,out);
 Z = linspace(-4,6,200) + linspace(0,newADData.spac(3)).'*1i*exp(-1i*newADData.chie);
 X = real(Z); Y = imag(Z);
@@ -62,4 +60,4 @@ phi = computeField(data,type);
 figure(3)
 
 plotFieldScattered(phi,newADData,newAAData,plotData,type)
-caxis(.5*[-5,5])
+caxis(.05*[-5,5])

@@ -45,14 +45,14 @@ g4 = gamma(quad4);
 % Now we define all the functions in their respective regions
     
 % Define polynomial
-p1 = mu(1) - 1i*g1*mu(2) - g1.^2*mu(3);
-p2 = mu(1) - 1i*g2*mu(2) - g2.^2*mu(3);
-p4 = mu(1) - 1i*g4*mu(2) - g4.^2*mu(3);
+p1 = -mu(1) + 1i*g1*mu(2) + g1.^2*mu(3);
+p2 =- mu(1) + 1i*g2*mu(2) + g2.^2*mu(3);
+p4 = -mu(1) + 1i*g4*mu(2) + g4.^2*mu(3);
 
 % Define deriative of polynomial
-Dp1 = -1i*mu(2) - 2*g1*mu(3);
-Dp2 = -1i*mu(2) - 2*g2*mu(3);
-Dp4 = -1i*mu(2) - 2*g4*mu(3);
+Dp1 = 1i*mu(2) + 2*g1*mu(3);
+Dp2 = 1i*mu(2) + 2*g2*mu(3);
+Dp4 = 1i*mu(2) + 2*g4*mu(3);
 
 expPHPD1 = exp(1i*(he*zg1 + d*g1));
 expPHPD2 = exp(1i*(he*zg2 + d*g2));
