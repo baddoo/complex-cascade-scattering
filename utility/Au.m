@@ -10,7 +10,7 @@ else
 Au = -2*pi*exp(1i*(d*Gamma + Sigma)).*cos(Zeta.*Y).*exp(-1i*Gamma.*X)./Kd;
 
     if strcmp(type,'pressure')
-        Au = 1i*(PM - Gamma).*exp(1i*PM*M^2*X).*Au;
+        Au = -1i*(PM - Gamma).*exp(1i*PM*M^2*X).*Au;
     elseif strcmp(type,'hvelocity')
         Au  = -1i*Gamma.*exp(1i*PM*M^2*X).*Au;
     end

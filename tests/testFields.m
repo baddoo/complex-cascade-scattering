@@ -17,20 +17,20 @@ ADData=struct('spacDim',     [sDim,dDim],... %Dimensional blade spacing
               'M',           0.2,...           %Mach number 
               'Wdim',        0,...           %Spanwise background velocity
               'case',        2, ...              %Case
-              'C',           (-.2623-0.0244i));                 %Coefficient of case                       
+              'C',           .001*(-.2623-0.0244i));                 %Coefficient of case                       
              % Issue is when C has a negative real part... Roots are found
              % fine, but associating which ones are in the upper or lower
              % half plane is difficult.
 %% Aeroacoustic Data
 AAData=struct( 'omegaDim',    [],...                 %Time Frequency
-               'omega',       20 + 1e-3i,...                 %Time Frequency
+               'omega',       5 + 1e-3i,...                 %Time Frequency
                'kxDim',       [],...                   %Tangential frequency
-               'kx',          15,...                   %Tangential frequency
+               'kx',          5,...                   %Tangential frequency
                'ky',          [],...
                'kyDim',       [],...                       %Normal frequency
                'kzDim',       [],...                       %Spanwise frequency
                'kz',          0,...
-               'Sigmao',      3*pi/4,...                  %Interblade phase angle in (x,y)-space
+               'Sigmao',      1*pi/4,...                  %Interblade phase angle in (x,y)-space
                'Sigma',       [],...
                'Amp',         [nan,1,nan]); %Amplitude of gust in form [At,An,A3]
 %% Information about Modes            
@@ -49,11 +49,9 @@ Z = linspace(-4,6,200) + linspace(0,newADData.spac(3)).'*1i*exp(-1i*newADData.ch
 X = real(Z); Y = imag(Z);
 plotData = struct('X',X,...
                   'Y',Y,...
-                  'axisLimits',chordDim*[-3,3,-2,2]);              
-tic            
-%newData=computeExponents(data,plotData);
-toc
-type = 'vvelocity';
+                  'axisLimits',chordDim*[-3,3,-2,2]);
+              
+type = 'pressure';
 
 phi = computeField(data,type);
 
@@ -61,3 +59,25 @@ figure(3)
 
 plotFieldScattered(phi,newADData,newAAData,plotData,type)
 caxis(.05*[-5,5])
+
+
+%% Check BC
+xgrid = 1 + sin(pi/2*(linspace(-1,1,100)));
+vel = computeField(data,'vvelocity');
+
+LW = 'LineWidth';
+upperPressure = phi(xgrid);
+lowerPressure = phi(xgrid + newADData.spac(2) + 1i*newADData.spac(1)).*exp(-1i*newAAData.Sigmao);
+pressureJump = upperPressure - lowerPressure;
+
+incVVel = newAAData.Amp(2)*exp(1i*newAAData.kx/newADData.Beta^2*xgrid).*exp(-1i*newAAData.omega*newADData.M.^2/newADData.Beta.^2.*xgrid);
+totalVVel = vel(xgrid) + incVVel;
+figure(4)
+plot(xgrid,real(newADData.C+1*pressureJump),LW,3)
+hold on
+plot(xgrid,real(incVVel),LW,3)
+plot(xgrid,real(-vel(xgrid)),LW,3)
+
+hold off
+
+

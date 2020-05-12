@@ -13,7 +13,7 @@ else
 AdRNum = sgn*Zeta.*cos(Zeta.*(Y-s)).*exp(-1i*Lambda.*X);
 
     if strcmp(type,'pressure')
-        AdRNum = 1i*(PM - Lambda).*exp(1i*PM*M^2*X).*AdRNum;
+        AdRNum = -1i*(PM - Lambda).*exp(1i*PM*M^2*X).*AdRNum;
     elseif strcmp(type,'hvelocity')
         AdRNum  = -1i*Lambda.*exp(1i*PM*M^2*X).*AdRNum;
     end

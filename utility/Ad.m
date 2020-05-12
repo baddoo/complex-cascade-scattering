@@ -10,7 +10,7 @@ else
 Ad = 2*pi*cos(Zeta.*(Y - s)).*exp(-1i*Gamma.*X)./Kd;
 
     if strcmp(type,'pressure')
-        Ad = 1i*(PM - Gamma).*exp(1i*PM*M^2*X).*Ad;
+        Ad = -1i*(PM - Gamma).*exp(1i*PM*M^2*X).*Ad;
     elseif strcmp(type,'hvelocity')
         Ad  = -1i*Gamma.*exp(1i*PM*M^2*X).*Ad;
     end

@@ -13,7 +13,7 @@ else
 AuRNum = -sgn*Zeta.*exp(1i*sgn*s*Zeta).*cos(Zeta.*Y).*exp(-1i*Lambda.*X);
 
     if strcmp(type,'pressure')
-        AuRNum = 1i*(PM - Lambda).*exp(1i*PM*M^2*X).*AuRNum;
+        AuRNum = -1i*(PM - Lambda).*exp(1i*PM*M^2*X).*AuRNum;
     elseif strcmp(type,'hvelocity')
         AuRNum  = -1i*Lambda.*exp(1i*PM*M^2*X).*AuRNum;
     end
