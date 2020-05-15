@@ -78,7 +78,7 @@ upLoc = (X <= Y*d/s);
 Xup = X(upLoc); Yup = Y(upLoc);  % Upsteam region
 D13LP = D(LPa,data); %  D^{(1,3)} evaluated at Lambda^+
 ARLP = AdR(Xup,Yup,LPa,ZPa,SQRT,spac,PM,M,type) + AuR(Xup,Yup,LPa,ZPa,SQRT,spac,PM,M,type); % 
-phiUp = pi*1i*ARLP*D13LP.';
+phiUp = 2i*pi*ARLP*D13LP.';
 
 % Calculate upper triangular field
 utLoc = (X > Y*d/s & X<=d);
