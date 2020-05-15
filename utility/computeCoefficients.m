@@ -6,8 +6,8 @@ kx=AAData.kx; omega=AAData.omega;
 KMTM=out.KMTM; KPTP=out.KPTP;
 TMd=out.TMd; TPd = out.TPd;
 LMa=out.LMa; LPa = out.LPa; 
-
-dmodes=out.dmodes;
+KMGM0= out.KMGM0;
+KPGM0= out.KPGM0;
 GM0=out.GM0; 
 PM0=out.PM0; 
 
@@ -46,20 +46,44 @@ Vpreq= permute(Vpre,[4,3,5,1,2]);
 F1= permute(F,[4,3,5,1,2]);
 L1= permute(L,[4,3,5,1,2]);
 
-coefdata.F1= F1;
-coefdata.Vpreq= Vpreq;
-coefdata.L1= L1;
-
 nfreq=length(kx);
-invmat=zeros(size(F1));
+invmat=inv(eye(size(F1))-F1*L1); %this matrix is inv*F
 
+w0  = AAData.Amp(2);
+T  = w0/(4i*pi^2*KMGM0);
+
+S = 0;
+
+V = w0*(PM0-GM0)./(4*pi^2*KPGM0);
+
+Tsum = permute(sum(T./TMminGM0,3),[1,2,4,3,5]);
+
+A = (1i*(TMd-PM0)./KpprTM).*Tsum;
+A1 = permute(A,[3,4,5,1,2]);
+V1 = permute(V,[3,4,5,1,2]);
+
+B1=zeros(size(A1));
+C1=zeros(size(A1));
+Dres = zeros(size(A1));
+
+% Can remove this looping since it is now obselete
 for ifreq = 1:nfreq
-invmat(:,:,ifreq)=inv(eye(dmodes)-F1(:,:,ifreq)*L1(:,:,ifreq)); %this matrix is inv*F
+Dres(:,:,ifreq) = F1(:,:,ifreq)*A1(:,:,ifreq) + Vpreq(:,:,ifreq)*V1;
+B1(:,:,ifreq)=invmat(:,:,ifreq)*Dres(:,:,ifreq);
+C1(:,:,ifreq)=L1(:,:,ifreq)*B1(:,:,ifreq);
 end
-coefdata.invmat=invmat;
-det(invmat)
-cond(invmat)
-data.D1=computeD1Coefficients(coefdata);
+
+B=permute(B1,[5,4,1,2,3]);
+C=permute(C1,[5,4,1,2,3]);
+
+data.T =  T;
+data.S =  S;
+data.A  = A;
+data.B  = B;
+data.C  = C;
+
+
+%Ddata=computeD1Coefficients(coefdata);
 
 data.kx=kx;
 data.omega=omega;

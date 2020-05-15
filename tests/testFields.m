@@ -9,15 +9,14 @@ vaneDistDim = chordDim/cos(stagAngDim*pi/180);
 dDim = vaneDistDim*sin(stagAngDim*pi/180);
 sDim = vaneDistDim*cos(stagAngDim*pi/180);
 
-%l
 %%
 ADData=struct('spacDim',     [sDim,dDim],... %Dimensional blade spacing
               'chordDim',    chordDim,...           %Blade length
               'c0',          340,...         %Speed of sound
               'M',           0.2,...           %Mach number 
-              'Wdim',        0,...           %Spanwise background velocity
-              'case',        2, ...              %Case
-              'C',           1*(-.2623+0.0244i));                 %Coefficient of case                       
+              'Wdim',        0,...                %Spanwise background velocity
+              'case',        2, ...               %Case
+              'C',           1*(-.2623+0.0244i)); %Coefficient of case                       
              % Issue is when C has a negative real part... Roots are found
              % fine, but associating which ones are in the upper or lower
              % half plane is difficult.
@@ -25,12 +24,12 @@ ADData=struct('spacDim',     [sDim,dDim],... %Dimensional blade spacing
 AAData=struct( 'omegaDim',    [],...                 %Time Frequency
                'omega',       10 + 1e-3i,...                 %Time Frequency
                'kxDim',       [],...                   %Tangential frequency
-               'kx',          4,...                   %Tangential frequency
+               'kx',          20,...                   %Tangential frequency
                'ky',          [],...
                'kyDim',       [],...                       %Normal frequency
                'kzDim',       [],...                       %Spanwise frequency
                'kz',          0,...
-               'Sigmao',      3*pi/4,...                  %Interblade phase angle in (x,y)-space
+               'Sigmao',      1*pi/4,...                  %Interblade phase angle in (x,y)-space
                'Sigma',       [],...
                'Amp',         [nan,1,nan]); %Amplitude of gust in form [At,An,A3]
 %% Information about Modes            

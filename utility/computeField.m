@@ -22,9 +22,11 @@ PM = data.PM0;
 omega = data.omega;
 w = data.w;
 zeta = @(zVar) mysqrt(omega*w,zVar);
-A = data.D1.A(:);
-B = data.D1.B(:);
-C = data.D1.C(:);
+A = data.A(:);
+B = data.B(:);
+C = data.C(:);
+KPGM = data.KPGM0;
+KMPM = data.KMPM0;
 
 zetaGM0 = zeta(GM);
 zetaPM0 = zeta(PM);
@@ -37,40 +39,6 @@ Sigma = data.Sigma;
 Zsz = size(Z); % Original size of Z
 Z = Z(:); % Turn Z into a column vector
 X = real(Z); Y = imag(Z);
-
-% % Define multiplication factors to allow for different fields
-% if strcmp(type,'potential')
-% tFacPM = 1;
-% tFacGM = 1;
-% tFacLM = 1;
-% tFacLPu = 1;
-% tFacLPt = 1;
-% tFacTM = 1;
-% tFacTP = 1;
-% finFac = 1;
-% elseif strcmp(type,'vvelocity')
-% tFac = exp(1i*X*PM*M^2);
-% tFacPM = 1;
-% tFacGM = 1;
-% tFacLM = 1;
-% tFacLPu = 1;
-% tFacLPu = 1i*ZPa;
-% tFacLPt = 1;
-% tFacTM = 1;
-% tFacTP = 1;
-% finFac = 1;
-% elseif strcmp(type,'hvelocity')
-% tFac = 1;
-% elseif strcmp(type,'pressure')
-% tFacGM = GM - PM;
-% tFacPM = 0;
-% tFacLM = LMa - PM;
-% tFacLPu = LPa - PM;
-% tFacLPt = LPa - PM;
-% tFacTM = TMd - PM;
-% tFacTP = TPd - PM;
-% finFac = -1i*exp(1i*X*PM.*M^2);
-% end
 
 % Calculate upstream field
 data.comb=[1,0,1,0];
@@ -103,7 +71,7 @@ phiRe =  2i*pi*ATPd*B ...
 % Calculate downstream triangular field
 % Calculate wake coefficient
 AsumG = -sum((A+C)./(1i*(TMd.'-PM)).*data.KMTM(:)./data.KMPM0.*exp(-2i*(TMd.'-PM)));
-TtermsG = -data.D1.T.*data.KMGM0./data.KPGM0./data.KMPM0.*exp(-2i*(GM-PM));
+TtermsG = -w0/(4i*pi^2)./KPGM./KMPM.*exp(-2i*(GM-PM));
 P =  AsumG + TtermsG;
 dtLoc = ( X <2+Y*d/s & X > 2);
 Xdt = X(dtLoc); Ydt = Y(dtLoc); % Downstream triangle

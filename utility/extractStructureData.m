@@ -20,7 +20,6 @@ TPminGM0 = coefdata.TPminGM0;
 Vpreq=       coefdata.Vpreq;
  F1=         coefdata.F1;
  L1=         coefdata.L1;
- invmat=     coefdata.invmat;
 KMGM0=       coefdata.KMGM0;
 KPGM0=       coefdata.KPGM0;
  KPLP=       coefdata.KPLP;
@@ -31,3 +30,4 @@ An=        coefdata.AAData.Amp(2);
 % k5 =        coefdata.AAData.k5;
 % kn5 =        coefdata.AAData.kn5;
 
+error
