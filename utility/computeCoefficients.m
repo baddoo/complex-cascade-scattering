@@ -22,9 +22,6 @@ coefdata.Beta=ADData.Beta;
 TPminTM=bsxfun(@minus,TPd,permute(TMd,[1,2,4,3,5]));
 coefdata.TPminTM=TPminTM;
 
-TMminGM0 = bsxfun(@minus,permute(TMd,[1,2,4,3,5]),GM0);
-coefdata.TMminGM0 = TMminGM0;
-
 TPminGM0 = bsxfun(@minus,permute(TPd,[1,2,4,3,5]),GM0);
 coefdata.TPminGM0 = TPminGM0;
 
@@ -46,44 +43,24 @@ Vpreq= permute(Vpre,[4,3,5,1,2]);
 F1= permute(F,[4,3,5,1,2]);
 L1= permute(L,[4,3,5,1,2]);
 
-nfreq=length(kx);
-invmat=inv(eye(size(F1))-F1*L1); %this matrix is inv*F
-
 w0  = AAData.Amp(2);
-T  = w0/(4i*pi^2*KMGM0);
-
-S = 0;
 
 V = w0*(PM0-GM0)./(4*pi^2*KPGM0);
 
-Tsum = permute(sum(T./TMminGM0,3),[1,2,4,3,5]);
-
-A = (1i*(TMd-PM0)./KpprTM).*Tsum;
+A = (1i*(TMd-PM0)./KpprTM).*w0./(4i*pi^2*KMGM0.*(TMd - GM0));
 A1 = permute(A,[3,4,5,1,2]);
 V1 = permute(V,[3,4,5,1,2]);
 
-B1=zeros(size(A1));
-C1=zeros(size(A1));
-Dres = zeros(size(A1));
-
-% Can remove this looping since it is now obselete
-for ifreq = 1:nfreq
-Dres(:,:,ifreq) = F1(:,:,ifreq)*A1(:,:,ifreq) + Vpreq(:,:,ifreq)*V1;
-B1(:,:,ifreq)=invmat(:,:,ifreq)*Dres(:,:,ifreq);
-C1(:,:,ifreq)=L1(:,:,ifreq)*B1(:,:,ifreq);
-end
+Dres = F1*A1 + Vpreq*V1;
+B1 = (eye(size(F1))-F1*L1)\Dres;
+C1=L1*B1;
 
 B=permute(B1,[5,4,1,2,3]);
 C=permute(C1,[5,4,1,2,3]);
 
-data.T =  T;
-data.S =  S;
 data.A  = A;
 data.B  = B;
 data.C  = C;
-
-
-%Ddata=computeD1Coefficients(coefdata);
 
 data.kx=kx;
 data.omega=omega;

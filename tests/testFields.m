@@ -22,7 +22,7 @@ ADData=struct('spacDim',     [sDim,dDim],... %Dimensional blade spacing
              % half plane is difficult.
 %% Aeroacoustic Data
 AAData=struct( 'omegaDim',    [],...                 %Time Frequency
-               'omega',       10 + 1e-3i,...                 %Time Frequency
+               'omega',       20 + 1e-3i,...                 %Time Frequency
                'kxDim',       [],...                   %Tangential frequency
                'kx',          20,...                   %Tangential frequency
                'ky',          [],...
