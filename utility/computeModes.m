@@ -27,8 +27,6 @@ if cos(chi)<0; error('The ellipse does not have the right parameters'); end
 % trunc = (min(numel(TP),numel(TM))-1)/2;
 % end
 Modes.trunc = trunc;
-regK(TP,ADData,AAData);
-regK(TM,ADData,AAData);
 %% Define acoustic modes
 aTrunc = permute(-trunc:trunc,[1,3,2]);
 f=(bsxfun(@minus,Sigma,2*pi*aTrunc))/del;
@@ -59,7 +57,6 @@ Kargs.TM=TM; Kargs.LM=LM; Kargs.TP=TP; Kargs.LP=LP;
 % the radius of integration by 50%.
 
 largeVal = sqrt(R0)*exp(1i*linspace(-pi,pi,20));
-%err = norm(Kminus(largeVal,Kargs).*Kplus(largeVal,Kargs)-regK(largeVal,ADData,AAData),'inf')
 err = norm(Kminus(largeVal,Kargs).*Kplus(largeVal,Kargs) - regK(largeVal,ADData,AAData),'inf');
 
 counter = counter + 1;
@@ -69,9 +66,6 @@ R0 = 1.5*R0;
 if counter>10; error("The roots couldn't all be found"); end
 
 end
-
-max(max(abs(K([TMd(:);TPd(:)],ADData,AAData))))
-max(max(abs(1./K([LMa(:);LPa(:)],ADData,AAData))))
 
 KMTM=permute(Kminus(permute(TMd,[3,2,1,4,5]),Kargs),[3,2,1,4,5]);
 KPTP=permute(Kplus(permute(TPd,[3,2,1,4,5]),Kargs),[3,2,1,4,5]); 
@@ -85,7 +79,7 @@ PM0 = -(omega)/Beta^2;
 output.GM0 = GM0;
 output.PM0 = PM0;
 
-pl=1;
+pl=0;
 if pl == 1
     figure(1)
 
@@ -153,7 +147,7 @@ output.Beta=    ADData.Beta;
 output.Sigma=   AAData.Sigma;
 output.w =      AAData.w;
 output.SQRTa=   SQRTa;
-
+output.comb = Modes.comb;
 end
 
 function [KpprTM,KmprTP]=computeKDerivatives(ADData,AAData,TMd,KMTM,TPd,KPTP)

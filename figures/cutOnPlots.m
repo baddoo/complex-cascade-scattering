@@ -1,17 +1,17 @@
-imageFolder = '../../../LaTeX/porous-jfm-r1/images/';
+imageFolder = '../../../LaTeX/porous-jfm-r2s/images/';
 
 chordDim = 1;
 vaneDistDim = .8*chordDim;
 M = .4;
 chi = 10*pi/180;
 
-nPts = 2000;
+nPts = 200;
 nDM = 2;
 nAng = 4;
 TPfin = zeros(2*nDM,nPts,nAng);
 
 xSol = zeros(2*nDM,1);
-C = [1e-5,0.1,.5,1];
+C = -[1e-5,0.1,.5,1];
 omegaVec = linspace(0.001,20,nPts);
     
 for l0 = 1:nAng
@@ -27,14 +27,15 @@ ADData=struct('spacDim',   [vaneDistDim*cos(chi),vaneDistDim*sin(chi)],...%Blade
              
 %% Aeroacoustic Data
 AAData=struct( 'omegaDim', [],...
-               'omega',    omegaVec(l1),...                      %Tangential Frequency
+               'omega',    omegaVec(l1)+1e-3i,...                      %Tangential Frequency
                'kx',       2,...
                'kxDim',    [],...
                'ky',       [],...
                'kyDim',    [],...
                'kz',       0,...                       %Spanwise frequency
                'kzDim',    [],...                       %Spanwise frequency
-               'sigmao',   4*pi/3,...                  %Interblade phase angle in (x,y)-space
+               'Sigmao',   4*pi/3,...                  %Interblade phase angle in (x,y)-space
+               'Sigma',    [],...
                'Amp',      [nan,1,nan]); %Amplitude of gust in form [At,An,A3]
 % Prepare data
 [newADData,newAAData] = prepareData(ADData,AAData);    
@@ -43,8 +44,8 @@ AAData=struct( 'omegaDim', [],...
     dPG = newADData.spac(2); sPG = newADData.spac(1); omega = newAAData.omega;
     delPG = newADData.spac(3);
     w = newAAData.w;
-    sigma = newAAData.sigma;
-    fm = (sigma - 2*pi*(-nDM:nDM))/delPG;
+    Sigma = newAAData.Sigma;
+    fm = (Sigma - 2*pi*(-nDM:nDM))/delPG;
 
     if l1 == 1
     
@@ -68,13 +69,14 @@ AAData=struct( 'omegaDim', [],...
     end
 end
 
+% Remove misleading point
+loc = find(imag(TPfin([2],:,1))>1e-2,1,'last');
+TPfin([2,4],loc+1,1)=0;
 
 %% Plots
 figure(1)
 
-% Remove misleading point
-loc = find(imag(TPfin([2],:,1))>1e-3,1,'last');
-TPfin([2,4],loc+1,1)=0;
+
 recCol1 = [255,240,240]/255;
 recCol2 = [240,240,255]/255;
 rectangle('Position',[-6.5,0,13,6.5],'FaceColor',recCol1,'EdgeColor',recCol1)
@@ -119,7 +121,7 @@ for l0 = 1:(nAng-1)
     plot(TPfin([4],2:end,l0+1).','-','Color',c(l0+1,:),'LineWidth',2)
     plot(TPfin([2,4],2,l0+1).','o','Color',c(l0+1,:),'MarkerFaceColor',c(l0+1,:))
 end
-legend(legendInfo,'Interpreter','latex','Location','northwest')
+legend(legendInfo,'Interpreter','latex','Location','southwest','FontSize',10)
 hold off
 
 axis equal

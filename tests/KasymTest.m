@@ -2,8 +2,8 @@ addpath(genpath('../'))
 
 imageFolder = '../../images/';
 
-chordDim = 1;
-stagAngDim = 50;
+chordDim = 1.3;
+stagAngDim =10;
 
 vaneDistDim = chordDim*.2;
 
@@ -15,25 +15,26 @@ sDim = vaneDistDim*cos(stagAngDim*pi/180);
 ADData=struct('spacDim',     [sDim,dDim],... %Dimensional blade spacing
               'chordDim',    chordDim,...           %Blade length
               'c0',          340,...         %Speed of sound
-              'M',           0.4,...           %Mach number 
+              'M',           0.1,...           %Mach number 
               'Wdim',        0,...           %Spanwise background velocity
-              'case',        1, ...              %Case
-              'C',           .5);                 %Coefficient of case                       
+              'case',        2, ...              %Case
+              'C',           -10);                 %Coefficient of case                       
              
 %% Aeroacoustic Data
 AAData=struct( 'omegaDim',    [],...                 %Time Frequency
-               'omega',       1,...                 %Time Frequency
+               'omega',       10,...                 %Time Frequency
                'kxDim',       [],...                   %Tangential frequency
-               'kx',          1,...                   %Tangential frequency
+               'kx',          5,...                   %Tangential frequency
                'ky',          [],...
                'kz',          [],...
                'kyDim',       [],...                       %Normal frequency
                'kzDim',       0,...                       %Spanwise frequency
-               'sigmao',      3*pi/4,...                  %Interblade phase angle in (x,y)-space
+               'Sigma',      3*pi/4,...                  %Interblade phase angle in (x,y)-space
+               'Sigmao',      [],...
                'Amp',         [nan,1,nan]); %Amplitude of gust in form [At,An,A3]
 %% Information about Modes            
 Modes=struct('comb',[1,1,1,1],...
-             'trunc',20000,...                     %Truncation of kernel modes
+             'trunc',5000,...                     %Truncation of kernel modes
              'dmodes',5,...                      %Number of duct mode
              'amodes',5);
 
@@ -55,8 +56,8 @@ switch cse
         expNI = .5 ;+ chie/pi;
     case 2
         % Need to choose branch here correctly.
-        expPI =  1/pi*acot(mu(2))+1;%+(1+-sign(-angle(1i-mu(2))))/2;
-        expNI = -1/pi*acot(mu(2));%+(1-sign(-angle(1i-mu(2))))/2;
+        expPI = -1/pi*acot(mu(2))+1;%+(1+-sign(-angle(1i-mu(2))))/2;
+        expNI =  1/pi*acot(mu(2));%+(1-sign(-angle(1i-mu(2))))/2;
     case 3
         expPI = 1;
         expNI = 1;
@@ -90,7 +91,7 @@ loglog(abs(largeGammaN),abs(KlargeN./KasympN),'r','LineWidth',3);
 axis square
 hold off
 
-
+return
 %% Verification of proposition 2
 largeGammaM = -(1+1i)*logspace(00,7,1e3);
 TPR = out.TP(real(out.TP)>=0); TPR = TPR(1:3000);

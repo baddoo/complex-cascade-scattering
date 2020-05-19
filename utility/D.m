@@ -21,7 +21,6 @@ KMTM = data.KMTM;
 KPGM0 = data.KPGM0;
 KMGM0 = data.KMGM0;
 
-
 if data.comb(1)==1
     
     w0 = data.AAData.Amp(2);

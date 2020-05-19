@@ -1,12 +1,9 @@
 % Tests whether the asymptotic approximations for the roots are correct.
-
-AAData.sigma5 = 3*pi/4;
-AAData.omega5 = 10;
 AAData.w = 3;
 d = .9; s = .5;
 ADData.spac = [s,d];
 ADData.chie = atan(d/s);
-AAData.sigma = 1; AAData.omega = 10;
+AAData.Sigma = 1; AAData.omega = 10;
 Modes.trunc = 100;
 
 tol = 1e-3;

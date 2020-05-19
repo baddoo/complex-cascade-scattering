@@ -2,8 +2,8 @@
 addpath(genpath('../'));
 imageFolder = '../../images/';
 
-chordDim = 1;
-stagAngDim = 30;
+chordDim = .5;
+stagAngDim = 45;
 vaneDistDim = chordDim/cos(stagAngDim*pi/180);
 
 dDim = vaneDistDim*sin(stagAngDim*pi/180);
@@ -51,15 +51,15 @@ plotData = struct('X',X,...
                   'axisLimits',chordDim*[-3,3,-2,2]);
               
 type = 'pressure';
-phi = computeField(data,type);
+phi = @(z) computeField(z,data,type);
 
 figure(3)
 plotFieldScattered(phi,newADData,newAAData,plotData,type)
-caxis(.05*[-5,5])
+caxis(.5*[-5,5])
 
 %% Check BC
 xgrid = 1 + sin(pi/2*(linspace(-1,1,100))); xgrid(1) = []; xgrid(end) = [];
-vel = computeField(data,'vvelocity');
+vel = @(z) computeField(z,data,'vvelocity');
 
 LW = 'LineWidth'; FS = 'FontSize';
 upperPressure = phi(xgrid);

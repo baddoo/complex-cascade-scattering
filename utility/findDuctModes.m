@@ -1,6 +1,6 @@
 function [TP3,TM3,asympGuess] = findDuctModes(R0,chi,ADData,AAData,Modes)
 
-tol = 1e-11;
+tol = 1e-10;
 
 f = @(xVar) 1./KNumlogD(xVar,ADData,AAData);
 logD = @(xVar) KNumlogD(xVar,ADData,AAData);

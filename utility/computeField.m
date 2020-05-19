@@ -1,13 +1,9 @@
 %% Computes that field at the relevant points
 
-function phi = computeField(data,type)
-
-phi = @(Z) evaluateField(Z,data,type);
-
-function phi = evaluateField(Z,data,type)
+function phi = computeField(Z,data,type)
 
 spac = data.spac;
-s = spac(1); d = spac(2);
+s = spac(1); d = spac(2); del = sqrt(s^2 + d^2);
 LPa = data.LPa(:).'; % Row vector of Lambda^+
 ZPa = data.ZPa(:).'; % Row vector of Zeta^+
 LMa = data.LMa(:).'; % Row vector of Lambda^+
@@ -19,7 +15,7 @@ TMd = data.TMd(:).';
 TPd = data.TPd(:).';
 GM = data.GM0;
 PM = data.PM0;
-omega = data.omega;
+omega = data.AAData.omega;
 w = data.w;
 zeta = @(zVar) mysqrt(omega*w,zVar);
 A = data.A(:);
@@ -32,7 +28,7 @@ zetaGM0 = zeta(GM);
 zetaPM0 = zeta(PM);
 w0 = data.AAData.Amp(2);
 
-M = data.M;
+M = data.ADData.M;
 Sigma = data.Sigma;
 
 % Partition Z into different sections 
@@ -47,6 +43,8 @@ Xup = X(upLoc); Yup = Y(upLoc);  % Upsteam region
 D13LP = D(LPa,data); %  D^{(1,3)} evaluated at Lambda^+
 ARLP = AdR(Xup,Yup,LPa,ZPa,SQRT,spac,PM,M,type) + AuR(Xup,Yup,LPa,ZPa,SQRT,spac,PM,M,type); % 
 phiUp = 2i*pi*ARLP*D13LP.';
+% Alternative expression of potential solution
+%phiUp = pi/del*(ZPa.*exp(1i*ZPa.*Yup).*exp(-1i*LPa.*Xup))*(D13LP./SQRT).';
 
 % Calculate upper triangular field
 utLoc = (X > Y*d/s & X<=d);
@@ -88,8 +86,11 @@ dsLoc = ( X > 2 + Y*d/s );
 Xdn = X(dsLoc); Ydn = Y(dsLoc);  % Downstream region
 ARLM = AdR(Xdn,Ydn,LMa,ZMa,SQRT,spac,PM,M,type) + AuR(Xdn,Ydn,LMa,ZMa,SQRT,spac,PM,M,type); 
 APM = Ad(Xdn,Ydn,PM,zeta(PM),spac,Sigma,PM,M,type) + Au(Xdn,Ydn,PM,zeta(PM),spac,Sigma,PM,M,type);
-phiDs = - 2i*pi*ARLM*D24LM.' ...
+phiDs = -2i*pi*ARLM*D24LM.' ...
         + 2i*pi*P*APM;
+% Alternative expression of potential solution
+% phiDs = - pi/del*(ZMa.*exp(-1i*ZMa.*Ydn).*exp(-1i*LMa.*Xdn))*(D24LM./SQRT).' ...
+%         + 2i*pi*P*APM;
 
 % Now put components back into the correct entries in the matrix
 phi = nan(Zsz);
@@ -98,8 +99,6 @@ phi(utLoc) = phiUt;
 phi(reLoc) = phiRe;
 phi(dtLoc) = phiDt;
 phi(dsLoc) = phiDs;
-
-end
 
 end
 

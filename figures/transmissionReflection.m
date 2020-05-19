@@ -1,50 +1,47 @@
 
-imageFolder = '../../../LaTeX/porous-jfm-r1/images/';
+imageFolder = '../../../LaTeX/porous-jfm-r2s/images/';
 
 chordDim = 1;
 semiChordDim = chordDim/2;
-vaneDistDim = 0.6*chordDim;
+vaneDistDim = 0.8*chordDim;
 stagAngDim = 30;
 
 dDim = vaneDistDim*sin(stagAngDim*pi/180);
 sDim = vaneDistDim*cos(stagAngDim*pi/180);
 
 c0 = 340;
-M = 0.2;
+M = 0.1;
 Beta = sqrt(1-M^2);
 
 % Define Rayleigh conductivity
 RDim = .02*semiChordDim; % Define radius of aperture
-howeReducedFreq = .5; % Set Howe's reduced frequency
-omega = howeReducedFreq*semiChordDim/RDim*(1+1e-3i); % Define my omega
+howeReducedFreq = 2; % Set Howe's reduced frequency
+omega = howeReducedFreq*semiChordDim/RDim; % Define my omega
 %KR = 2*RDim*(0.096 - 1i*1.030); % 1
-%KR = 2*RDim*(1.252 - 1i*0.705);% 2 
-KR = 2*RDim*(-.243 - 1i*.264); % .5
+KR = 2*RDim*(1.252 - 1i*0.705);% 2 
+%KR = 2*RDim*(-.243 - 1i*.264); % .5
 %KR = 2*RDim*(1.015+1i*0.127); % 3.5
 %KR = 0.928 + 1i*.0385; % Define Rayleigh conductivity from Howe 1996 tables
-alphaH = [.05,.1]; % Define open area fractions
+alphaH = [.01,.05]; % Define open area fractions
 
 N = alphaH/(pi*RDim^2);
 
-CII = -2*alphaH*KR/(1i*omega*pi*RDim^2);
+tildeKR = N*KR;
+CII = 2*tildeKR/(1i*omega);
 CII = [1e-4,CII];
 
-% d = dDim/semiChordDim;
-% s = sDim/semiChordDim*Beta;
-% del = sqrt(s^2+d^2); chie = atan(d/s);
+d = dDim/semiChordDim;
+s = sDim/semiChordDim*Beta;
+del = sqrt(s^2+d^2); chie = atan(d/s);
 
-% x0 = [0,0,0];
-% l = @(xVar) (root(xVar,del,w,omega,chie,d,s));
-% options = optimoptions('fsolve','MaxFunctionEvaluations',1e3);
-% 
-% x = fsolve(l,x0,options);
-% lambdaM0 = x(1);
-% zetaM0 = x(2);
-% sigma = x(3);
-sigma = -3*pi/4;
-kx = 5;
+Beta = sqrt(1-M^2);
+kz = 0;
+w=mysqrt(M/Beta^2,kz/Beta); % Need to spanwise flow terms.
+Sigma = -pi/4;
+fm = Sigma/del;
+kx = -(-fm*sin(chie) - cos(chie).*mysqrt(omega*w,Sigma/del))*Beta^2;
 
-for l1 = [1,2,3]
+for l1 = 1:3
 %l
 %%
 ADData=struct('spacDim', [sDim,dDim],...%Blade Spacing [h,d]
@@ -57,19 +54,19 @@ ADData=struct('spacDim', [sDim,dDim],...%Blade Spacing [h,d]
              
 %% Aeroacoustic Data
 AAData=struct( 'omegaDim', [],...
-               'omega',    omega*(1 + 1e-7i),...                      %Tangential Frequency
-               'kx',       kx*(1 + 1e-7i),...
+               'omega',    omega*(1 + 1e-5i),...                      %Tangential Frequency
+               'kx',       kx,...
                'kxDim',    [],...
                'ky',       [],...                       %Normal frequency
                'kyDim',    [],...
                'kz',       0,...                       %Spanwise frequency
                'kzDim',    [],...                       %Spanwise frequency
-               'sigma',    sigma,...                  %Interblade phase angle in (x,y)-space
-               'sigmao',   [],...                  %Interblade phase angle in (x,y)-space
+               'Sigma',    Sigma,...                  %Interblade phase angle in (x,y)-space
+               'Sigmao',   [],...                  %Interblade phase angle in (x,y)-space
                'Amp',      [nan,1,nan]); %Amplitude of gust in form [At,An,A3]
 %% Information about Modes            
 Modes=struct('comb',[1,1,1,1],...
-             'trunc',100,...                     %Truncation of kernel modes
+             'trunc',500,...                     %Truncation of kernel modes
              'dmodes',15,...                      %Number of duct mode
              'amodes',15);
 
@@ -81,25 +78,23 @@ xSurf = (1+sin(pi/2*linspace(-1,1)))/2;
 
 data=computeCoefficients(newADData,newAAData,out);
 
-Z = linspace(-4,6,100) + linspace(0,newADData.spac(3),100).'*1i*exp(-1i*newADData.chie);
+Z = linspace(-4,6,300) + linspace(0,newADData.spac(3),300).'*1i*exp(-1i*newADData.chie);
 X = real(Z); Y = imag(Z);
 
 plotData = struct('X',X,...
                   'Y',Y,...
                   'axisLimits',[-3,3,-2,2]);              
 tic            
-newData=computeExponents(data,plotData);
+pres = computeField(data,'pressure');
 toc
-type = 'pressure';
 
-h=computeField(newData,type);
+
 %%
 figure(5)
 
-plotField(h,newADData,newAAData,plotData,type)
-caxis(.5*[-100,100])
+plotField(pres,newADData,newAAData,plotData,'pressure')
+caxis(1.2*[-100,100])
 latexPNG(['trans-',num2str(l1)],imageFolder,gca);
-
 %%
 LPa = permute(out.LPa,[3,2,1]);
 LMa = permute(out.LMa,[3,2,1]);
@@ -117,17 +112,17 @@ se = newADData.spac(3);
 
 R = pi*abs(ZPa.*DLP./SQRTa./se);
 T = pi*abs(ZMa.*DLM./SQRTa./se.*exp(-2i*LMa));
-T(ceil(end/2))=T(ceil(end/2));
+T(ceil(end/2))=1+T(ceil(end/2));
 
 modeNum = 2;
 
-locs = find(abs(imag(LMa(floor(end/2)-modeNum+1:floor(end/2)+modeNum+1)))>1e-2);
+locs = find(abs(imag(LMa(floor(end/2)-modeNum+1:floor(end/2)+modeNum+1)))>1e-4);
 
 num = numel(LMa);
 x = -modeNum:modeNum;
 
  figure(2)
-% %clf
+% Find modes that are cut off
  b=bar(x,abs([R(floor(end/2)-modeNum+1:floor(end/2)+modeNum+1), ...
           T(floor(end/2)-modeNum+1:floor(end/2)+modeNum+1)]) ,...
           'FaceColor','flat');
@@ -138,10 +133,7 @@ x = -modeNum:modeNum;
  b(2).CData(locs,:) = b(2).CData(locs,:)+.4;     
  xlabel('Mode number, m ')
  ylabel('$\left| R_m \right|, \left| T_m \right|$','Interpreter','Latex')
-% 
-% cleanfigure
- ylim([0,2])
-% %%matlab2tikz([imageFolder,'tr-',num2str(l1),'.tex'], 'height', '\fheight', 'width', '\fwidth','parseStrings',false,'extratikzpictureoptions','trim axis left, trim axis right');
+ylim([0,2])
 latexPNGNAR(['tr-',num2str(l1)],imageFolder,gca);
 %close
 end
@@ -214,18 +206,4 @@ hold off
 xlabel('$C_{II}$')
 ylabel('$\left| R_0 \right|, \left| T_0-1 \right|$')
 matlab2tikz([imageFolder,'trc-log.tex'], 'height', '\fheight', 'width', '\fwidth','parseStrings',false,'extratikzpictureoptions','trim axis left, trim axis right');
-
-%xlim([.0,.1])
 ylim([0,1])
-%%axis([-inf,1,1e-2,1])
-
-function F = root(x,del,w,omega,chie,d,s)
-
-f = (x(3)-2*pi)/del;
-mysq = mysqrt(w*omega,f);
-
-F(1) = (x(1) - (-f*sin(chie) - cos(chie)*mysq));
-F(2) = (x(2) - (-(x(3) + d*x(1)-2*pi))/s);
-F(3) = (x(3) - (-d*x(1) - s*x(2)));
-
-end
