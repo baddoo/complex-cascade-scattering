@@ -1,24 +1,42 @@
-% Finds the roots of the meromorphic function.
-
-
 function finRoots = rootFinder(f,logD,knownRootsInit,R0,chi,tol)
+%rootFinder    Finds the roots of a meromorphic function.
+%  finRoots = rootFinder(F,LOGD,KNOWNROOTSINIT,R0,CHI,TOL) finds the roots
+%  of the meromorphic function F inside the ellipse of radius R0 with
+%  eccentricity CHI to a tolerance of TOL. The logarithmic derivative of F
+%  is provided as LOGD, and any known roots may be included as
+%  KNOWNROOTSINIT to speed up the calculation. The algorithm uses an
+%  adaptive version of the Delves and Lyness algorithm [1] to locate the
+%  zeros. The algorithm requires numerically integrating the logarithmic
+%  derivative of the given function over ellipses in the complex
+%  plane. These integrals are evaluated using the trapezoidal rule [2],
+%  which converges exponentially fast on these contours. In particular,
+%  this algorithm locates the zeros in a set of annuli that eventually span
+%  a large set of the complex plane.
+%
+%  [1] L. M. Delves and J. N. Lyness, “A numerical method for locating the 
+%  zeros of an analytic function,” Math. Comput., 1967.
+%
+% ﻿[2] L. N. Trefethen and J. A. C. Weideman, “The Exponentially Convergent 
+%  Trapezoidal Rule,” SIAM Rev., vol. 56, no. 3, pp. 385–458, 2014.
 
+% Set the maximum number of roots permitted in each annulus
 nTol = 5;
 
+% Define the logaritmic derivative with the known zeros removed.
 polyLogD = @(xVar,krV) sum(1./(xVar - permute(krV(:),[4,2,3,1])),4);
 argFun = @(xVar,Np,krV) (logD(xVar) - polyLogD(xVar,krV)).*xVar.^Np;
 
-% Define ellipse
+% Define ellipse for integration
 z = @(th,rV) rV.*(cos(th) + 1i*cos(chi)*sin(th));
 dzdth = @(th,rV) rV.*(-sin(th) + 1i*cos(chi)*cos(th));
 
-% Define integrand
+% Define integrand by Delves and Lyness
 intFun = @(th,rV,Np,krV) dzdth(th,rV).*argFun(z(th,rV),Np,krV);
 
 % Define roots that are already known
 newKR = knownRootsInit;
 
-% Count zeros in R0-circle
+% Count zeros in R0-ellipse
 nInt = 1e2*round(2*pi*R0);
 tInt = linspace(0,2*pi,nInt+1); tInt(end) = [];
 tInt0 = tInt; nInt0 = nInt;
@@ -121,7 +139,7 @@ end
 
 finRoots = newKR(:);
 
-% % Uncomment to view plots
+% % Uncomment to view plots for debugging
 % 
 % nx = 1e3; ny = 1e3;
 % zp = 1.1*(linspace(-max(Rvec),max(Rvec),nx) + 1i*linspace(-max(Rvec),max(Rvec),ny).');
