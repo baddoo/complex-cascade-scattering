@@ -1,4 +1,6 @@
 function K = regK(gamma,ADData,AAData)
+% Regularised version of the Wiener--Hopf kernel. 
+% Functions are rescaled to avoid rounding errors.
 
 % Extract data from structures
 omega = AAData.omega;

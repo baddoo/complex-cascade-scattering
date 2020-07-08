@@ -1,4 +1,5 @@
 function K = K(gamma,ADData,AAData)
+% Evaluates the Wiener--Hopf kernel.
 
 omega = AAData.omega;
 w = AAData.w;

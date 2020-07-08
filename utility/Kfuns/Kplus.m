@@ -1,4 +1,5 @@
 function Kplus = Kplus(gammav,Kargs)
+% Factorisation of Wiener--Hopf kernel into the upper half plane.
 
 %% Extract data from structs
 TM=Kargs.TM; LM=Kargs.LM;

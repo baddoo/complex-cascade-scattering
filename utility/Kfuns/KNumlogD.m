@@ -1,8 +1,7 @@
-% The logarithmic derivative of numerator of K.
-% The domain must be partitioned, and different realisations of K applied
-% to avoid rounding errors.
-
 function KLD = KNumlogD(gamma,ADData,AAData)
+% The logarithmic derivative of the numerator of K.
+% The domain must be partitioned, and different representations of K applied
+% to avoid rounding errors.
 
 % Make a zero matrix of the correct size
 KLD = zeros(size(gamma));

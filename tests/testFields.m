@@ -1,4 +1,3 @@
-
 %addpath(genpath('../'));
 %imageFolder = '../../images/';
 
@@ -17,9 +16,6 @@ ADData=struct('spacDim',     [sDim,dDim],... %Dimensional blade spacing
               'Wdim',        0,...                %Spanwise background velocity
               'case',        2, ...               %Case
               'C',           -1); %Coefficient of case                       
-             % Issue is when C has a negative real part... Roots are found
-             % fine, but associating which ones are in the upper or lower
-             % half plane is difficult.
 %% Aeroacoustic Data
 AAData=struct( 'omegaDim',    [],...                 %Time Frequency
                'omega',       16*(1 + 1e-5i),...                 %Time Frequency
@@ -28,20 +24,20 @@ AAData=struct( 'omegaDim',    [],...                 %Time Frequency
                'ky',          [],...
                'kyDim',       [],...                       %Normal frequency
                'kzDim',       [],...                       %Spanwise frequency
-               'kz',          0,...
+               'kz',          0,...                         
                'Sigmao',      1*pi/4,...                  %Interblade phase angle in (x,y)-space
                'Sigma',       [],...
-               'Amp',         [nan,1,nan]); %Amplitude of gust in form [At,An,A3]
+               'Amp',         [nan,1,nan]);          %Amplitude of gust in form [At,An,A3]
 %% Information about Modes            
 Modes=struct('comb',[1,1,1,1],...
              'trunc',500,...                     %Truncation of kernel modes
              'dmodes',70,...                      %Number of duct mode
-             'amodes',70);
+             'amodes',70);                      % Number of acoustic modes
 
 [newADData,newAAData] = prepareData(ADData,AAData);      
 tic
 out = computeModes(newADData,newAAData,Modes);
-toc
+disp(['It took ' num2str(toc) ' seconds to compute the modes.'])
 %%
 data=computeCoefficients(newADData,newAAData,out);
 Z = linspace(-4,6,200) + linspace(0,newADData.spac(3)).'*1i*exp(-1i*newADData.chie);
@@ -54,7 +50,9 @@ type = 'pressure';
 phi = @(z) computeField(z,data,type);
 
 figure(3)
+tic
 plotFieldScattered(phi,newADData,newAAData,plotData,type)
+disp(['It took ' num2str(toc) ' seconds to plot the solution over ' num2str(numel(Z)) ' points per period window.'])
 caxis(.05*[-5,5])
 
 %% Check BC
@@ -73,7 +71,6 @@ figure(4)
 plot(xgrid,abs(newADData.C*pressureJump),LW,3)
 hold on
 plot(xgrid,abs(2*totalVVel),LW,3)
-%plot(xgrid,abs(dpot),LW,3)
 
 hold off
 

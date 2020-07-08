@@ -1,4 +1,6 @@
 function Kminus = Kminus(gammav,Kargs)
+% Factorisation of Wiener--Hopf kernel into the lower half plane.
+
 %% Extract data from structs
 TP=Kargs.TP; LP=Kargs.LP;
 

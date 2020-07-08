@@ -1,8 +1,7 @@
-% The logarithmic derivative of K.
-% The domain must be partitioned, and different realisations of K applied
-% to avoid rounding errors.
-
 function KLD = KlogD(gamma,ADData,AAData)
+% The logarithmic derivative of K.
+% The domain must be partitioned, and different representations of K applied
+% to avoid rounding errors.
 
 % Make a zero matrix of the correct size
 KLD = zeros(size(gamma));

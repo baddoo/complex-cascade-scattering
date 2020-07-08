@@ -10,6 +10,7 @@ newAAData = AAData;
 M = ADData.M;
 Udim = M*ADData.c0;
 Wdim = ADData.Wdim;
+W = Wdim/Udim;
 Beta = sqrt(1-M^2);
 newADData.Beta = Beta;
 chordDim = ADData.chordDim;
@@ -91,7 +92,7 @@ newAAData.kz = kz;
 
 newAAData.Amp = [0,1i*omega*ky,0];
 
-w=mysqrt(M/Beta^2,kz/Beta); % Need to spanwise flow terms.
+w=sqrt((M/Beta^2)^2 - (kz/Beta)^2 + 2*kz*M^4*W*(1+W*kz)/Beta^2); % Need to spanwise flow terms.
 newAAData.w=w;
 
 C = ADData.C;
@@ -110,11 +111,15 @@ switch ADData.case
     case 3
     
         % Need to complete    
-        mu0 = -2*omega;
-        mu1 = -2i*M^2*omega; 
+        mu0 = -omega^2/Beta^4;
+        mu1 = -2i*omega/Beta^2; 
         mu2 = 1;
         mu = C*[mu0,mu1,mu2];
     
+end
+
+if ADData.case==2 && real(C)>0
+    warning('The scenario where the boundary condition is in case 2 and the constant C>0 can give spurious results.')
 end
 
 newADData.mu = mu;
