@@ -101,10 +101,3 @@ phi(dtLoc) = phiDt;
 phi(dsLoc) = phiDs;
 
 end
-
-
-
-
-
-
-

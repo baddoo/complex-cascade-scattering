@@ -20,8 +20,8 @@ allRootsUnique = [allRootsUnique;knownRootsInit(~loc).'];
 %TP = sort(allRootsUnique(imag(allRootsUnique)>= max(imag([AAData.kx,AAData.omega]/ADData.Beta.^2))));
 %TM = sort(allRootsUnique(imag(allRootsUnique)<  max(imag([AAData.kx,AAData.omega]/ADData.Beta.^2))));
 
-TP = sort(allRootsUnique(imag((allRootsUnique))>= -.1*sign(real(allRootsUnique))+0*imag(AAData.kx/ADData.Beta.^2)));
-TM = sort(allRootsUnique(imag((allRootsUnique))<  -.1*sign(real(allRootsUnique))+0*imag(AAData.kx/ADData.Beta.^2)));
+TP = sort(allRootsUnique(imag((allRootsUnique))>= -.00*sign(real(allRootsUnique))+0*imag(AAData.kx/ADData.Beta.^2)));
+TM = sort(allRootsUnique(imag((allRootsUnique))<  -.00*sign(real(allRootsUnique))+0*imag(AAData.kx/ADData.Beta.^2)));
 
 % Reshape into third dimension
 TP3 = permute(TP,[3,2,1]);

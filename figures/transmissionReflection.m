@@ -28,7 +28,7 @@ N = alphaH/(pi*RDim^2);
 
 tildeKR = N*KR;
 CII = 2*tildeKR/(1i*omega);
-CII = [1e-4,CII];
+CII = [-1e-4,CII];
 
 d = dDim/semiChordDim;
 s = sDim/semiChordDim*Beta;
@@ -85,15 +85,14 @@ plotData = struct('X',X,...
                   'Y',Y,...
                   'axisLimits',[-3,3,-2,2]);              
 tic            
-pres = computeField(data,'pressure');
+pres = @(z) computeField(z,data,'pressure');
 toc
-
 
 %%
 figure(5)
 
 plotField(pres,newADData,newAAData,plotData,'pressure')
-caxis(1.2*[-100,100])
+caxis(1.5*[-100,100])
 latexPNG(['trans-',num2str(l1)],imageFolder,gca);
 %%
 LPa = permute(out.LPa,[3,2,1]);

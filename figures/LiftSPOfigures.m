@@ -5,7 +5,7 @@ chordDim = 1;
 vaneDistDim = 0.6;
 stagAngDim = 40;
 
-nFreq = 100;
+nFreq = 1000;
 C = -[0.0001,0.01,.1,1];
 nC = numel(C);
 omegaLoop = linspace(0,30,nFreq+1); omegaLoop(1)=[];
@@ -28,7 +28,7 @@ ADData=struct('spacDim',    [vaneDistDim*cos(stagAngDim*pi/180),vaneDistDim*sin(
               
 %% Aeroacoustic Data
 AAData=struct( 'omegaDim', [],...
-               'omega',    omegaLoop(l)+1e-6i,...                      %Tangential Frequency
+               'omega',    omegaLoop(l)+1e-7i,...                      %Tangential Frequency
                'kx',       'gust',...
                'kxDim',    [],...
                'ky',       [],...                       %Normal frequency
@@ -40,7 +40,7 @@ AAData=struct( 'omegaDim', [],...
                'Amp',      [nan,1,nan]); %Amplitude of gust in form [At,An,A3]
 %% Information about Modes            
 Modes=struct('comb',[1,1,1,1],...
-             'trunc',500,...                     %Truncation of kernel modes
+             'trunc',400,...                     %Truncation of kernel modes
              'dmodes',35,...                      %Number of duct mode
              'amodes',myAModes);
 
@@ -57,12 +57,10 @@ DLP = permute(D(permute(LPa,[3,2,1]),data),[3,2,1]);
 data.comb = [0 1 0 1];
 DLM = permute(D(permute(LMa,[3,2,1]),data),[3,2,1]);
 
-Beta = newADData.Beta;
-s = sqrt(newADData.spac(1).^2+newADData.spac(2)^2);
 se = newADData.spac(3);
 
-spoU = pi^2*Beta^2*omegaLoop(l).*abs(ZPa.*DLP).^2.*real(1./SQRTa)./se./abs(newAAData.Amp(2).^2);
-spoD = pi^2*Beta^2*omegaLoop(l).*abs(ZMa.*DLM).^2.*real(1./SQRTa)./se./abs(newAAData.Amp(2).^2);
+spoU = pi^2*omegaLoop(l).*abs(ZPa.*DLP).^2.*real(1./SQRTa)./se./abs(newAAData.Amp(2).^2);
+spoD = pi^2*omegaLoop(l).*abs(ZMa.*DLM).^2.*real(1./SQRTa)./se./abs(newAAData.Amp(2).^2);
 
 SPOU(m,l,:) = spoU;
 SPOD(m,l,:) = spoD;
@@ -99,12 +97,12 @@ firstDSMode = SPOD(:,:,ceil(end/2));
 secondDSMode = SPOD(:,:,ceil(end/2)+1);
 
 figure(2)
-plot(omegaLoop,real(firstDSMode(1,:)),'k','LineWidth',3)
+plot([0,omegaLoop],[0,real(firstDSMode(1,:))],'k','LineWidth',3)
 hold on
 for j = 1:(nC-1)
-plot(omegaLoop,real(firstDSMode(j+1,:)),'LineWidth',2,'Color',c(j,:))
+plot([0,omegaLoop],[0,real(firstDSMode(j+1,:))],'LineWidth',2,'Color',c(j,:))
 end
-axis([0,omegaLoop(end),0,.014])
+axis([0,omegaLoop(end),-1e-6,.014])
 hold off
 xlabel('$\omega$')
 ylabel('$W_-(0)$')
@@ -133,10 +131,10 @@ matlab2tikz([imageFolder,'spod2-glegg','.tex'], 'height', '\fheight', 'width', '
 
 %% Plot difference in sound power output first mode
 firstDSModeDel = 10*log10(SPOD(:,:,ceil(end/2))./SPOD(1,:,ceil(end/2)));
-cutLocs1 = find(abs(SPOD(1,:,ceil(end/2)))>1e-5,1,'first');
+cutLocs1 = find(abs(SPOD(1,:,ceil(end/2)))>1e-4,1,'first');
 firstDSModeDel(:,1:cutLocs1-1,ceil(end/2))=0;
 secondDSModeDel = 10*log10(SPOD(:,:,ceil(end/2)+1)./SPOD(1,:,ceil(end/2)+1));
-cutLocs2 = find(abs(SPOD(1,:,ceil(end/2)+1))>1e-5,1,'first');
+cutLocs2 = find(abs(SPOD(1,:,ceil(end/2)+1))>1e-4,1,'first');
 secondDSModeDel(:,1:cutLocs2-1,ceil(end/2))=0;
 
 figure(4)

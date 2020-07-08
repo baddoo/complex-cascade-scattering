@@ -1,4 +1,4 @@
-function plotField(h,ADData,AAData,plotData,type)
+function plotField(fun,ADData,AAData,plotData,type)
 
 nP=6;
 
@@ -25,33 +25,33 @@ M = ADData.M;
 GM0 = -real(kx)/Beta^2;
 PM0 = -real(omega)/Beta^2;
 
-hInc = exp(1i*(-GM0.*X/semiChordDim + omega*ky*Y/semiChordDim*Beta));
+funInc = exp(1i*(-GM0.*X/semiChordDim + omega*ky*Y/semiChordDim*Beta));
 
-if strcmp(type,'acoustic')
-    pangle = AAData.sigma;
-    hIncFin = hInc;
+if strcmp(type,'potential')
+    pangle = AAData.Sigma;
+    funIncFin = funInc;
 elseif strcmp(type,'hvelocity')
-    pangle = AAData.sigmao;
-    hIncFin = (-1i*GM0+1i*M^2*PM0).*hInc.*exp(1i*M^2*PM0.*X/semiChordDim);
+    pangle = AAData.Sigmao;
+    funIncFin = (-1i*GM0+1i*M^2*PM0).*funInc.*exp(1i*M^2*PM0.*X/semiChordDim);
 elseif strcmp(type,'vvelocity')
-    pangle = AAData.sigmao;
-    hIncFin = (1i*omega*ky).*hInc.*exp(1i*M^2*PM0.*X/semiChordDim);
+    pangle = AAData.Sigmao;
+    funIncFin = (1i*omega*ky).*funInc.*exp(1i*M^2*PM0.*X/semiChordDim);
 elseif strcmp(type,'pressure')
-    pangle = AAData.sigmao;
-    hIncFin = (-1i*GM0+1i*PM0).*hInc.*exp(1i*M^2*PM0.*X/semiChordDim);
+    pangle = AAData.Sigmao;
+    funIncFin = 1i*(GM0 - PM0).*funInc.*exp(1i*M^2*PM0.*X/semiChordDim);
 elseif strcmp(type,'source')
-    pangle = AAData.sigma;
+    pangle = AAData.Sigma;
 elseif strcmp(type,'periodic')
     pangle = 0;
 end
 
-h2 = funPerMult(h.',exp(1i*pangle),nP);
-hIncFinPer = funPerMult(hIncFin.',exp(1i*pangle),nP);
+fun2 = funPerMult(fun(plotData.X+1i*plotData.Y).',exp(1i*pangle),nP);
+hIncFinPer = funPerMult(funIncFin.',exp(1i*pangle),nP);
 
 rot=exp(1i*atan(dDim/sDim));
 newcoord = (Xper+1i*Yper)*rot;
 
-h=pcolor(real(newcoord),imag(newcoord),real(h2 + hIncFinPer));
+h=pcolor(real(newcoord),imag(newcoord),real(fun2 + hIncFinPer));
 set(h, 'EdgeColor', 'none');
 
 hold on 

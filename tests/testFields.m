@@ -1,10 +1,10 @@
 
-addpath(genpath('../'));
-imageFolder = '../../images/';
+%addpath(genpath('../'));
+%imageFolder = '../../images/';
 
-chordDim = .5;
-stagAngDim = 45;
-vaneDistDim = chordDim/cos(stagAngDim*pi/180);
+chordDim = 1;
+stagAngDim = 20;
+vaneDistDim = 0.8;
 
 dDim = vaneDistDim*sin(stagAngDim*pi/180);
 sDim = vaneDistDim*cos(stagAngDim*pi/180);
@@ -13,18 +13,18 @@ sDim = vaneDistDim*cos(stagAngDim*pi/180);
 ADData=struct('spacDim',     [sDim,dDim],... %Dimensional blade spacing
               'chordDim',    chordDim,...           %Blade length
               'c0',          340,...         %Speed of sound
-              'M',           0.2,...           %Mach number 
+              'M',           0.4,...           %Mach number 
               'Wdim',        0,...                %Spanwise background velocity
               'case',        2, ...               %Case
-              'C',           1*(-.2623+0.0244i)); %Coefficient of case                       
+              'C',           -1); %Coefficient of case                       
              % Issue is when C has a negative real part... Roots are found
              % fine, but associating which ones are in the upper or lower
              % half plane is difficult.
 %% Aeroacoustic Data
 AAData=struct( 'omegaDim',    [],...                 %Time Frequency
-               'omega',       20 + 1e-3i,...                 %Time Frequency
+               'omega',       16*(1 + 1e-5i),...                 %Time Frequency
                'kxDim',       [],...                   %Tangential frequency
-               'kx',          20,...                   %Tangential frequency
+               'kx',          6,...                   %Tangential frequency
                'ky',          [],...
                'kyDim',       [],...                       %Normal frequency
                'kzDim',       [],...                       %Spanwise frequency
@@ -35,8 +35,8 @@ AAData=struct( 'omegaDim',    [],...                 %Time Frequency
 %% Information about Modes            
 Modes=struct('comb',[1,1,1,1],...
              'trunc',500,...                     %Truncation of kernel modes
-             'dmodes',100,...                      %Number of duct mode
-             'amodes',100);
+             'dmodes',70,...                      %Number of duct mode
+             'amodes',70);
 
 [newADData,newAAData] = prepareData(ADData,AAData);      
 tic
@@ -55,23 +55,26 @@ phi = @(z) computeField(z,data,type);
 
 figure(3)
 plotFieldScattered(phi,newADData,newAAData,plotData,type)
-caxis(.5*[-5,5])
+caxis(.05*[-5,5])
 
 %% Check BC
 xgrid = 1 + sin(pi/2*(linspace(-1,1,100))); xgrid(1) = []; xgrid(end) = [];
 vel = @(z) computeField(z,data,'vvelocity');
-
 LW = 'LineWidth'; FS = 'FontSize';
 upperPressure = phi(xgrid);
 lowerPressure = phi(xgrid + newADData.spac(2) + 1i*newADData.spac(1)).*exp(-1i*newAAData.Sigmao);
 pressureJump = upperPressure - lowerPressure;
 
 incVVel = newAAData.Amp(2)*exp(1i*newAAData.kx/newADData.Beta^2*xgrid).*exp(-1i*newAAData.omega*newADData.M.^2/newADData.Beta.^2.*xgrid);
+pot = @(z) computeField(z,data,'potential');
+dpot = pot(xgrid) - pot(xgrid + newADData.spac(2) + 1i*newADData.spac(1)).*exp(-1i*newAAData.Sigma);
 totalVVel = vel(xgrid) + incVVel;
 figure(4)
-plot(xgrid,real(newADData.C*pressureJump),LW,3)
+plot(xgrid,abs(newADData.C*pressureJump),LW,3)
 hold on
-plot(xgrid,real(2*totalVVel),LW,3)
+plot(xgrid,abs(2*totalVVel),LW,3)
+%plot(xgrid,abs(dpot),LW,3)
+
 hold off
 
 legend('$C_{II}\times$ pressure', '$2 \times$ vertical velocity','Interpreter','Latex',FS,15)

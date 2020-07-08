@@ -2,7 +2,6 @@ function [data] = computeCoefficients(ADData,AAData,out)
 
 %% Extract data.
 data=out;
-kx=AAData.kx; omega=AAData.omega;
 KMTM=out.KMTM; KPTP=out.KPTP;
 TMd=out.TMd; TPd = out.TPd;
 KMGM0= out.KMGM0;
@@ -18,7 +17,7 @@ F = 1i*exp(2i*(TPd(:) - TMd(:).'))./(TPd(:) - PM0)./(TPd(:) - TMd(:).').*KMTM(:)
 A = (TMd-PM0)*w0./(4*pi^2*KMGM0*KpprTM.*(TMd - GM0));
 
 Dres = F*A(:) ...
-      -w0*(PM0-GM0)*exp(2i*(TPd(:) - GM0))./(4i*pi^2*KPGM0*(TPd(:) - GM0).*(TPd(:) - PM0).*KmprTP(:));
+       + w0*(PM0-GM0)*exp(2i*(TPd(:) - GM0))./(4i*pi^2*KPGM0*(TPd(:) - GM0).*(TPd(:) - PM0).*KmprTP(:));
 B1 = (eye(size(F))-F*L)\Dres;
 C1=L*B1;
 
