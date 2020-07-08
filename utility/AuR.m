@@ -1,5 +1,5 @@
 function AuR = AuR(X,Y,Lambda,Zeta,SQRT,spac,PM,M,type)
-
+%AUR is a function used to evaluate the solution.
 s = spac(1); d = spac(2); % Spacing
 del = sqrt(s^2 + d^2);
 sgn = sign(imag(Lambda(end)));

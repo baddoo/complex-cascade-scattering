@@ -1,6 +1,6 @@
-%% Removes duplicate entries in a complex vector
-
 function finV = myUnique(v,tol)
+%myUnique Removes duplicate entries in a complex vector to a specified
+%tolerance.
 
 vr = real(v(:));
 vi = imag(v(:));

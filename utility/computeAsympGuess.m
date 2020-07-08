@@ -1,7 +1,6 @@
-% Calculates the asymptotic approximations for the roots of the
-% Wiener--Hopf kernel function.
-
 function [asympGuess,coefficients] = computeAsympGuess(ADData,AAData,Modes)
+%COMPUTEASYMPGUESS Calculates the asymptotic approximations for the roots of the
+% Wiener--Hopf kernel function.
 
 % Extract relevant data from structures
 mu = ADData.mu;

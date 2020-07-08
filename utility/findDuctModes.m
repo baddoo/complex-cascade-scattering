@@ -1,4 +1,12 @@
 function [TP3,TM3,asympGuess] = findDuctModes(R0,chi,ADData,AAData,Modes)
+%FINDDUCTMODES Calculates the duct modes
+%[TP3,TM3,ASYMPGUESS] = findDuctModes(R0,CHI,ADDATA,AADATA,MODES)
+%calculates the duct modes based on data from the structures ADDATA, AADATA
+%and MODES. The duct modes are found using a mixture of Newton iteration
+%and the method of Delves and Lyness. The asymptotic approximations for the
+%roots are used as initial guesses for a Newton iteration algorithm. The
+%remaining roots are found using the Delves and Lyness method, which uses
+%contours of integration based on R0 and CHI.
 
 tol = 1e-10;
 

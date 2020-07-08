@@ -1,4 +1,5 @@
 function Ad = Ad(X,Y,Gamma,Zeta,spac,Sigma,PM,M,type)
+%AD is a function used to evaluate the solution.
 
 s = spac(1); d = spac(2); % Spacing
 Kd = 4*pi*(cos(s*Zeta) - cos(d*Gamma + Sigma));

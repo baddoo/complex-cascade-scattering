@@ -1,6 +1,6 @@
-%% Computes that field at the relevant points
 
 function phi = computeField(Z,data,type)
+%COMPUTEFIELD Computes that field at the points Z
 
 spac = data.spac;
 s = spac(1); d = spac(2); del = sqrt(s^2 + d^2);

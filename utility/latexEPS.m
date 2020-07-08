@@ -1,7 +1,5 @@
 function latexEPS(imagename,folder,ax)
-
-%addpath('../export_fig')
-
+%LATEXEPS Creates a figure to be included in LaTeX of EPS format.
 xlim=get(ax,'Xlim');
 ylim=get(ax,'Ylim');
 

@@ -1,4 +1,5 @@
 function D = D(gam,data)
+%D Computes the function D defined in the paper.
 
 Beta = data.ADData.Beta;
 w0 = data.AAData.Amp(2);

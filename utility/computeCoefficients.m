@@ -1,4 +1,6 @@
 function [data] = computeCoefficients(ADData,AAData,out)
+%COMPUTECOEFFICIENTS Computes the coefficients of the solution based on the
+%Wiener--Hopf solution.
 
 %% Extract data.
 data=out;

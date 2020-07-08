@@ -1,4 +1,8 @@
 function [newADData,newAAData] = prepareData(ADData,AAData)
+%prepareData  Prepares the input data for calculations
+% [newADData,newAAData] = prepareData(ADData,AAData) preprocesses the input
+% data by performing the relevant non-dimensionalisations and rescalings
+% necessary for the ensuing analytic treatment.
 
 newADData = ADData;
 newAAData = AAData;

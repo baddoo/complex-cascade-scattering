@@ -1,11 +1,13 @@
 function output = computeModes(ADData,AAData,Modes)
+% computeModes Computes the relevant modes for the problem
 
 %% Get data from structures
 s=ADData.spac(1); d=ADData.spac(2); del = ADData.spac(3);
 trunc=Modes.trunc; w=AAData.w; Sigma=AAData.Sigma;
 kx=AAData.kx; omega = AAData.omega; chie = ADData.chie;
 Beta = ADData.Beta; amodes=Modes.amodes;
-%% Define duct mods
+
+%% Compute duct mods
 R0 = 5;
 err = inf;
 counter = 0;
@@ -27,14 +29,15 @@ if cos(chi)<0; error('The ellipse does not have the right parameters'); end
 % trunc = (min(numel(TP),numel(TM))-1)/2;
 % end
 Modes.trunc = trunc;
-%% Define acoustic modes
+
+%% Compute acoustic modes
 aTrunc = permute(-trunc:trunc,[1,3,2]);
 f=(bsxfun(@minus,Sigma,2*pi*aTrunc))/del;
 SQRT=mysqrt(w*omega,f); output.SQRT=SQRT;
 LM=-f*sin(chie)-cos(chie)*SQRT;
 LP=-f*sin(chie)+cos(chie)*SQRT;
 
-%% Define
+%% Compute other modes
 dmodes = Modes.dmodes;
 
 TMd = TM(:,:,(1:dmodes),:,:);
@@ -79,6 +82,7 @@ PM0 = -(omega)/Beta^2;
 output.GM0 = GM0;
 output.PM0 = PM0;
 
+%% Phase plot for debugging.
 pl=0;
 if pl == 1
     figure(1)
@@ -151,7 +155,7 @@ output.comb = Modes.comb;
 end
 
 function [KpprTM,KmprTP]=computeKDerivatives(ADData,AAData,TMd,KMTM,TPd,KPTP)
-  
+% Compute the derivatives of K.  
 s=ADData.spac(1); d=ADData.spac(2);
 Sigma = AAData.Sigma;
 omega = AAData.omega;
