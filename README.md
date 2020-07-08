@@ -15,18 +15,18 @@ Pressure field             |  Chord-wise velocity field
 
 </center>
 
-%Note the vortex shedding in the chord-wise velocity field.
+Note the vortex shedding in the chord-wise velocity field.
 
 In order to use the code, simply clone the repository onto your machine with:
 
 ```
-git clone https://github.com/baddoo/complex-cascade-scattering.git.
+git clone https://github.com/baddoo/complex-cascade-scattering.git
 ```
 
 Make sure that all the subfolders are in the MATLAB search path by using, for example, the genpath command.
 
 To get started try playing around with the `testFields.m` file inside the `tests` folder. This should give you an idea of what the code can do.
 
-Feel free to get in touch if you have any questions or identify and bugs.
+Feel free to get in touch if you have any questions or identify any bugs.
 
 
